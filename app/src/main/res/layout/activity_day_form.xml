@@ -62,8 +62,8 @@
                 <GridLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:rowCount="3"
-                        android:columnCount="3"
+                        android:rowCount="4"
+                        android:columnCount="2"
                         android:orientation="horizontal">
 
                     <CheckBox
