@@ -19,7 +19,9 @@
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-        <ScrollView android:paddingTop="?attr/actionBarSize"
+        <ScrollView android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="?attr/actionBarSize"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scrollbars="vertical">
