@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.NumberPicker;
 import jarosyjarosy.mentrualcycleproject.R;
 
 public class DayFormActivity extends AppCompatActivity {
@@ -21,6 +22,15 @@ public class DayFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_day_form);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NumberPicker temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
+        String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
+                "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃", "37,35℃", "37,40℃"};
+        temperaturePicker.setMaxValue(temps.length-1);
+        temperaturePicker.setMinValue(0);
+        temperaturePicker.setWrapSelectorWheel(false);
+        temperaturePicker.setDisplayedValues(temps);
+        temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(

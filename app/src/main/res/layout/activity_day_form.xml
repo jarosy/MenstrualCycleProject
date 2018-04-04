@@ -27,30 +27,31 @@
                     android:scrollbars="vertical">
 
             <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="match_parent"
+                          android:layout_height="wrap_content"
                           android:orientation="vertical">
-                <GridLayout
+                <android.support.constraint.ConstraintLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:columnCount="2"
-                        android:rowCount="1"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content">
+
                     <TextView
                             android:id="@+id/temperatureLabel"
                             android:text="@string/temperature_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="start|top"
-                            android:textSize="10pt"/>
-                    <EditText
-                            android:id="@+id/temperatureInput"
-                            android:layout_height="match_parent"
-                            android:hint="@string/temperature_hint"
-                            android:layout_width="match_parent"
-                            android:inputType="numberDecimal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:textSize="10pt"
-                            android:layout_gravity="left"/>
-                </GridLayout>
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginLeft="0dp"
+                            app:layout_constraintLeft_toLeftOf="parent"/>
+                    <NumberPicker
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/temperaturePicker"
+                            android:layout_marginTop="8dp"
+                            app:layout_constraintTop_toBottomOf="@+id/temperatureLabel"
+                            android:layout_marginLeft="8dp" app:layout_constraintLeft_toLeftOf="parent"
+                            android:layout_marginRight="8dp" app:layout_constraintRight_toRightOf="parent"/>
+                </android.support.constraint.ConstraintLayout>
 
                 <TextView
                         android:id="@+id/mucusLabel"
