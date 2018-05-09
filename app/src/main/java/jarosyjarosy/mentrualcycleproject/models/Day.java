@@ -4,17 +4,27 @@ import java.util.Date;
 import java.util.List;
 
 public class Day {
+    private Integer dayId;
     private Date createDate;
     private Integer dayOfCycle;
     private Float temperature;
     private String bleeding;
     private List<String> mucus;
     private String dilationOfCervix;
+    private String positionOfCervix;
     private String hardnessOfCervix;
     private Boolean ovulatoryPain;
     private Boolean tensionInTheBreasts;
     private String otherSymptoms;
     private Boolean intercourse;
+
+    public Integer getDayId() {
+        return dayId;
+    }
+
+    public void setDayId(Integer dayId) {
+        this.dayId = dayId;
+    }
 
     public Date getCreateDate() {
         return createDate;
@@ -64,6 +74,14 @@ public class Day {
         this.dilationOfCervix = dilationOfCervix;
     }
 
+    public String getPositionOfCervix() {
+        return positionOfCervix;
+    }
+
+    public void setPositionOfCervix(String positionOfCervix) {
+        this.positionOfCervix = positionOfCervix;
+    }
+
     public String getHardnessOfCervix() {
         return hardnessOfCervix;
     }
@@ -103,4 +121,5 @@ public class Day {
     public void setIntercourse(Boolean intercourse) {
         this.intercourse = intercourse;
     }
+
 }

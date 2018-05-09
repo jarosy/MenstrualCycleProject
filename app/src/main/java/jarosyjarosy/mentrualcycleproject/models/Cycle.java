@@ -1,14 +1,21 @@
 package jarosyjarosy.mentrualcycleproject.models;
 
 import java.util.Date;
-import java.util.List;
 
 public class Cycle {
+    private Long cycleId;
     private Date startDate;
     private Date endDate;
-    private List<Day> days;
     private Integer peakOfMucus;
     private Integer peakOfCervix;
+
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
     public Date getStartDate() {
         return startDate;
@@ -24,14 +31,6 @@ public class Cycle {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public List<Day> getDays() {
-        return days;
-    }
-
-    public void setDays(List<Day> days) {
-        this.days = days;
     }
 
     public Integer getPeakOfMucus() {
