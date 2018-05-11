@@ -1,6 +1,8 @@
-package jarosyjarosy.mentrualcycleproject.activities;
+package jarosyjarosy.menstrualcycleproject.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,7 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import jarosyjarosy.mentrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.repository.MenstrualCycleDbHelper;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,11 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionbar;
     private Button newDayButton;
     private Button newCycleButton;
+    private MenstrualCycleDbHelper menstrualCycleDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        menstrualCycleDbHelper = new MenstrualCycleDbHelper(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
@@ -45,8 +56,11 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if(menuItem.getTitle().toString().matches("Dodaj dzień")){
-                           openDayForm(navigationView);
+                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
+                            openDayForm(navigationView);
+                        }
+                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                            openTable(navigationView);
                         }
 
                         return true;
@@ -75,5 +89,26 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtras(b);
         startActivity(intent);
     }
+
+    public void openTable(View view) {
+        Intent intent = new Intent(MainActivity.this, TableActivity.class);
+        startActivity(intent);
+    }
+
+    private void writeToSD() throws IOException {
+        File sd = Environment.getExternalStorageDirectory();
+        String backupDBPath = "menstrualcyclebackup.db";
+        File currentDB = new File(this.getDatabasePath("menstrualcycle.db").toString());
+        File backupDB = new File(sd, backupDBPath);
+
+        if (currentDB.exists()) {
+            FileChannel src = new FileInputStream(currentDB).getChannel();
+            FileChannel dst = new FileOutputStream(backupDB).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        }
+    }
+
 
 }

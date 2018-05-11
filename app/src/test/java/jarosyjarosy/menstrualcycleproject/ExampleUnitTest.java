@@ -1,4 +1,4 @@
-package jarosyjarosy.mentrualcycleproject;
+package jarosyjarosy.menstrualcycleproject;
 
 import org.junit.Test;
 

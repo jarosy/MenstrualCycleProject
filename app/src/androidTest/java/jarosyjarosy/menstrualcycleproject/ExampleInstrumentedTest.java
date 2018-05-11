@@ -1,4 +1,4 @@
-package jarosyjarosy.mentrualcycleproject;
+package jarosyjarosy.menstrualcycleproject;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

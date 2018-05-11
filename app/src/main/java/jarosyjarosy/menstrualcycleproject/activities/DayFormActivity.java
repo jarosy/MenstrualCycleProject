@@ -1,4 +1,4 @@
-package jarosyjarosy.mentrualcycleproject.activities;
+package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import jarosyjarosy.mentrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,7 +25,6 @@ public class DayFormActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionBar actionbar;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
     private Calendar calendar = Calendar.getInstance();
     SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private EditText datePicker;
@@ -42,7 +41,7 @@ public class DayFormActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view_day);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_day);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -53,9 +52,11 @@ public class DayFormActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if(menuItem.getTitle().toString().matches("Dodaj dzień")){
-                            Intent intent = new Intent(DayFormActivity.this, DayFormActivity.class);
-                            startActivity(intent);
+                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
+                            openDayForm(navigationView);
+                        }
+                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                            openTable(navigationView);
                         }
 
                         return true;
@@ -109,7 +110,6 @@ public class DayFormActivity extends AppCompatActivity {
         temperaturePicker.setValue(12);
 
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -119,4 +119,21 @@ public class DayFormActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void openDayForm(View view) {
+        Boolean setDate = false;
+        if (view.getTag() != null) {
+            setDate = Boolean.valueOf(view.getTag().toString());
+        }
+        Intent intent = new Intent(DayFormActivity.this, DayFormActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean("setDate", setDate);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
+    public void openTable(View view) {
+        Intent intent = new Intent(DayFormActivity.this, TableActivity.class);
+        startActivity(intent);
+    }
+
 }

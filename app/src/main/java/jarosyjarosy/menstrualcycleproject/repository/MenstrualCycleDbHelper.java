@@ -1,13 +1,13 @@
-package jarosyjarosy.mentrualcycleproject.repository;
+package jarosyjarosy.menstrualcycleproject.repository;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class MentrualCycleDbHelper extends SQLiteOpenHelper {
+public class MenstrualCycleDbHelper extends SQLiteOpenHelper {
 
-    public MentrualCycleDbHelper(Context context) {
-        super(context, "mentrualcycle.db", null, 1);
+    public MenstrualCycleDbHelper(Context context) {
+        super(context, "menstrualcycle.db", null, 1);
     }
 
     @Override
@@ -39,6 +39,7 @@ public class MentrualCycleDbHelper extends SQLiteOpenHelper {
                         "intercourse integer," +
                         "cycle_id integer," +
                         "foreign key (cycle_id) references cycles(cycle_id));");
+
     }
 
     @Override

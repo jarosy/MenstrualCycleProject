@@ -1,4 +1,4 @@
-package jarosyjarosy.mentrualcycleproject.models;
+package jarosyjarosy.menstrualcycleproject.models;
 
 import java.util.Date;
 
