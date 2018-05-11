@@ -1,5 +1,6 @@
 package jarosyjarosy.mentrualcycleproject.activities;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,31 +10,39 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import jarosyjarosy.mentrualcycleproject.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class DayFormActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
+    private ActionBar actionbar;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private EditText datePicker;
+    private NumberPicker temperaturePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_form);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_day);
-        NumberPicker temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
-        String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
-                "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃", "37,35℃", "37,40℃"};
-        temperaturePicker.setMaxValue(temps.length-1);
-        temperaturePicker.setMinValue(0);
-        temperaturePicker.setWrapSelectorWheel(false);
-        temperaturePicker.setDisplayedValues(temps);
-        temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        temperaturePicker.setValue(12);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_day);
+        setSupportActionBar(toolbar);
+        actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_day);
+        navigationView = (NavigationView) findViewById(R.id.nav_view_day);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -53,11 +62,52 @@ public class DayFormActivity extends AppCompatActivity {
                     }
                 });
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_day);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        Bundle b = getIntent().getExtras();
+        boolean setDate = false;
+        if(b != null) {
+            setDate = b.getBoolean("setDate");
+        }
+        datePicker = (EditText) findViewById(R.id.dateEdit);
+        if (setDate) {
+            calendar.add(Calendar.DATE, 1);
+            datePicker.setText(appDateFormat.format(calendar.getTime()));
+            datePicker.setEnabled(false);
+        }
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                datePicker.setText(appDateFormat.format(calendar.getTime()));
+            }
+
+        };
+        datePicker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(DayFormActivity.this, date, calendar
+                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_day);
+        temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
+        String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
+                "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃", "37,35℃", "37,40℃"};
+        temperaturePicker.setMaxValue(temps.length-1);
+        temperaturePicker.setMinValue(0);
+        temperaturePicker.setWrapSelectorWheel(false);
+        temperaturePicker.setDisplayedValues(temps);
+        temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        temperaturePicker.setValue(12);
+
     }
 
     @Override

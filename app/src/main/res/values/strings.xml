@@ -4,9 +4,9 @@
     <string name="show_cycles">Moje cykle</string>
     <string name="settings">Ustawienia</string>
     <string name="new_day">Nowy dzień</string>
-    <string name="temperature_label">Temperatura</string>
-    <string name="mucus_label">Śluz</string>
-    <string name="cervix_label">Szyjka</string>
+    <string name="temperature_label"><u>Temperatura</u></string>
+    <string name="mucus_label"><u>Śluz</u></string>
+    <string name="cervix_label"><u>Szyjka</u></string>
     <string name="cervix_label_dilation">Rozwarcie</string>
     <string name="cervix_label_position">Pozycja</string>
     <string name="cervix_soft">Miękka</string>
@@ -22,11 +22,11 @@
     <string name="mucus_muzzy"> Mętny</string>
     <string name="mucus_dry">Sucho</string>
     <string name="mucus_anomalous">Nietypowy</string>
-    <string name="more_symptoms">Objawy dodatkowe</string>
+    <string name="more_symptoms"><u>Objawy dodatkowe</u></string>
     <string name="ovulatory_pain">Ból owulacyjny</string>
     <string name="breast_tension">Napięcie w piersiach</string>
     <string name="others">Inne:</string>
-    <string name="intercourse">Współżycie</string>
+    <string name="intercourse"><u>Współżycie</u></string>
     <string name="date">Data</string>
     <string name="save">Zapisz</string>
     <string name="yes">Tak</string>

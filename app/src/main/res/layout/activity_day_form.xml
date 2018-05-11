@@ -29,6 +29,14 @@
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
+                <EditText
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:id="@+id/dateEdit"
+                        android:inputType="numberDecimal"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:hint="@string/date"/>
                 <android.support.constraint.ConstraintLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
@@ -131,23 +139,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textSize="7pt"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:textStyle="italic"/>
 
                 <RadioGroup
                         android:id="@+id/radioGroupPosition"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="4"
-                            android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPos1"
@@ -160,11 +160,6 @@
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/position_1"/>
 
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPos2"
@@ -176,11 +171,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/position_2"/>
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPos3"
@@ -192,11 +182,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/position_3"/>
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPos4"
@@ -208,8 +193,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/position_4"/>
-                        </LinearLayout>
-                    </GridLayout>
 
                 </RadioGroup>
                 <TextView
@@ -218,21 +201,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textSize="7pt"
+                        android:textStyle="italic"
                         android:layout_gravity="center_horizontal"/>
                 <RadioGroup
                         android:id="@+id/radioGroupDilation"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="4"
-                            android:orientation="horizontal">
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioDil1"
@@ -244,11 +219,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/dilation_1"/>
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioDil2"
@@ -260,11 +230,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/dilation_2"/>
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioDil3"
@@ -276,11 +241,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/dilation_3"/>
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioDil4"
@@ -292,31 +252,20 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:src="@drawable/dilation_4"/>
-                        </LinearLayout>
-                    </GridLayout>
                 </RadioGroup>
+                <TextView
+                        android:id="@+id/cervixLabelHardness"
+                        android:text="@string/cervix_hardness"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="7pt"
+                        android:textStyle="italic"
+                        android:layout_gravity="center_horizontal"/>
                 <RadioGroup
                         android:id="@+id/radioGroupHardness"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/cervixLabelHardness"
-                            android:text="@string/cervix_soft"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="7pt"
-                            android:layout_gravity="center_horizontal"/>
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="2"
-                            android:orientation="horizontal">
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioSoft"
@@ -326,12 +275,6 @@
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
 
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
                             <RadioButton
                                     android:id="@+id/radioHard"
                                     android:text="@string/cervix_hard"
@@ -339,8 +282,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
-                        </LinearLayout>
-                    </GridLayout>
                 </RadioGroup>
                 <TextView
                         android:id="@+id/moreSymptomsLabel"
@@ -349,28 +290,19 @@
                         android:layout_height="match_parent"
                         android:textSize="10pt"
                         android:layout_gravity="center_horizontal"/>
+                <TextView
+                        android:id="@+id/ovulatoryPainLabel"
+                        android:text="@string/ovulatory_pain"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="7pt"
+                        android:textStyle="italic"
+                        android:layout_gravity="center_horizontal"/>
                 <RadioGroup
                         android:id="@+id/radioGroupOvulatoryPain"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/ovulatoryPainLabel"
-                            android:text="@string/ovulatory_pain"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="7pt"
-                            android:layout_gravity="center_horizontal"/>
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="2"
-                            android:orientation="horizontal">
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPainYes"
@@ -380,11 +312,6 @@
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
 
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioPainNo"
@@ -393,32 +320,21 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
-                        </LinearLayout>
-                    </GridLayout>
                 </RadioGroup>
 
+                <TextView
+                        android:id="@+id/ovulatoryBreastTension"
+                        android:text="@string/breast_tension"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="7pt"
+                        android:textStyle="italic"
+                        android:layout_gravity="center_horizontal"/>
                 <RadioGroup
                         android:id="@+id/radioGroupBreastTension"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/ovulatoryBreastTension"
-                            android:text="@string/breast_tension"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:textSize="7pt"
-                            android:layout_gravity="center_horizontal"/>
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="2"
-                            android:orientation="horizontal">
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioBreastYes"
@@ -428,12 +344,6 @@
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
 
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
                             <RadioButton
                                     android:id="@+id/radioBreastNo"
                                     android:text="@string/no"
@@ -441,8 +351,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
-                        </LinearLayout>
-                    </GridLayout>
                 </RadioGroup>
                 <TextView
                         android:id="@+id/othersLabel"
@@ -450,6 +358,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textSize="7pt"
+                        android:textStyle="italic"
                         android:layout_gravity="center_horizontal"/>
                 <EditText
                         android:layout_height="match_parent"
@@ -458,28 +367,19 @@
                         android:inputType="text"
                         android:clickable="true"
                         android:hint="..."/>
+
+                <TextView
+                        android:id="@+id/intercourseLabel"
+                        android:text="@string/intercourse"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="10pt"
+                        android:layout_gravity="center_horizontal"/>
                 <RadioGroup
                         android:id="@+id/radioIntercourse"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/intercourseLabel"
-                            android:text="@string/intercourse"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="10pt"
-                            android:layout_gravity="center_horizontal"/>
-                    <GridLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:rowCount="1"
-                            android:columnCount="2"
-                            android:orientation="horizontal">
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                             <RadioButton
                                     android:id="@+id/radioIntercourseYes"
@@ -489,12 +389,6 @@
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
 
-                        </LinearLayout>
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
                             <RadioButton
                                     android:id="@+id/radioIntercourseNo"
                                     android:text="@string/no"
@@ -502,16 +396,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:checked="false"/>
-                        </LinearLayout>
-                    </GridLayout>
                 </RadioGroup>
-                <EditText
-                        android:layout_height="match_parent"
-                        android:layout_width="match_parent"
-                        android:id="@+id/dateEdit"
-                        android:inputType="date"
-                        android:clickable="true"
-                        android:hint="@string/date"/>
                 <Button android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/save"

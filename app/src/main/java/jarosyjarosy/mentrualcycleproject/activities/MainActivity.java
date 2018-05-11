@@ -16,15 +16,23 @@ import jarosyjarosy.mentrualcycleproject.R;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private ActionBar actionbar;
     private Button newDayButton;
+    private Button newCycleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
 
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_main);
         navigationView.setNavigationItemSelectedListener(
@@ -44,12 +52,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
     @Override
@@ -63,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openDayForm(View view) {
+        Boolean setDate = false;
+        if (view.getTag() != null) {
+            setDate = Boolean.valueOf(view.getTag().toString());
+        }
         Intent intent = new Intent(MainActivity.this, DayFormActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean("setDate", setDate);
+        intent.putExtras(b);
         startActivity(intent);
     }
 
