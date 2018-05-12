@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.repository.MenstrualCycleDbHelper;
 
@@ -34,15 +33,19 @@ public class TableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_table);
         menstrualCycleDbHelper = new MenstrualCycleDbHelper(this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setUpActionBar();
+    }
+
+    public void setUpActionBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_table);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override

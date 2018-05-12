@@ -2,6 +2,7 @@ package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.*;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,14 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.NumberPicker;
+import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class DayFormActivity extends AppCompatActivity {
 
@@ -26,22 +24,42 @@ public class DayFormActivity extends AppCompatActivity {
     private ActionBar actionbar;
     private DrawerLayout drawerLayout;
     private Calendar calendar = Calendar.getInstance();
-    SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private EditText datePicker;
     private NumberPicker temperaturePicker;
+    private SeekBar seekBarPosition;
+    private SeekBar seekBarDilation;
+
+    private Canvas cervixCanvas;
+    private Paint cervixPaint = new Paint();
+    private Bitmap cervixBitmap;
+    private ImageView cervixView;
+    private float circleY;
+    private float circleRadius;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_day_form);
+        setContentView(R.layout.activity_dayform);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_day);
+        setUpActionBar();
+        setUpDate();
+        setUpTemperaturePicker();
+        setUpCervixDrawing();
+
+    }
+
+    public void setUpActionBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_day);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -62,12 +80,25 @@ public class DayFormActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setUpDate() {
         Bundle b = getIntent().getExtras();
         boolean setDate = false;
-        if(b != null) {
+        if (b != null) {
             setDate = b.getBoolean("setDate");
         }
+
         datePicker = (EditText) findViewById(R.id.dateEdit);
         if (setDate) {
             calendar.add(Calendar.DATE, 1);
@@ -97,27 +128,65 @@ public class DayFormActivity extends AppCompatActivity {
                         calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+    }
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_day);
+    private void setUpTemperaturePicker() {
         temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
         String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
                 "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃", "37,35℃", "37,40℃"};
-        temperaturePicker.setMaxValue(temps.length-1);
+        temperaturePicker.setMaxValue(temps.length - 1);
         temperaturePicker.setMinValue(0);
         temperaturePicker.setWrapSelectorWheel(false);
         temperaturePicker.setDisplayedValues(temps);
         temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         temperaturePicker.setValue(12);
-
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+
+    public void setUpCervixDrawing() {
+        seekBarDilation = (SeekBar) findViewById(R.id.seekDilation);
+        seekBarPosition = (SeekBar) findViewById(R.id.seekPosition);
+        cervixView = (ImageView) findViewById(R.id.cervixCanvas);
+        cervixPaint.setColor(Color.BLACK);
+        cervixPaint.setStyle(Paint.Style.STROKE);
+        cervixPaint.setStrokeWidth(10);
+        cervixBitmap = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888);
+        cervixView.setImageBitmap(cervixBitmap);
+        cervixCanvas = new Canvas(cervixBitmap);
+        circleRadius = 20;
+        circleY = 105;
+
+        cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+
+        seekBarDilation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                circleRadius = 20 + 3*i;
+                cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        seekBarPosition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                circleY = 105 - 5*i;
+                cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
     }
 
     public void openDayForm(View view) {
@@ -131,7 +200,8 @@ public class DayFormActivity extends AppCompatActivity {
         intent.putExtras(b);
         startActivity(intent);
     }
-    public void openTable(View view) {
+
+    private void openTable(View view) {
         Intent intent = new Intent(DayFormActivity.this, TableActivity.class);
         startActivity(intent);
     }
