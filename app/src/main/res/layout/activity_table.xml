@@ -22,67 +22,21 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:paddingTop="?attr/actionBarSize">
-            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                         android:id = "@+id/RHE"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="0"
-                         android:padding="5dp">
+            <ScrollView android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                <HorizontalScrollView android:layout_width="match_parent"
+                                      android:layout_height="match_parent">
+                    <LinearLayout android:layout_width="match_parent"
+                                  android:layout_height="match_parent">
+                        <GridLayout android:id="@+id/table"
+                                    android:rowCount="47"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
 
-                <TableRow android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/runLabel"
-                            android:text="R"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/hitLabel"
-                            android:text="H"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/errorLabel"
-                            android:text="E"
-                            android:layout_height="wrap_content"
-                    />
-                </TableRow>
-
-                <TableRow android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/visitorRuns"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/visitorHits"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/visitorErrors"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                </TableRow>
-
-                <TableRow android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/homeRuns"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/homeHits"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                    <TextView
-                            android:id="@+id/homeErrors"
-                            android:text="0"
-                            android:layout_height="wrap_content"
-                    />
-                </TableRow>
-            </TableLayout>
+                        </GridLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </ScrollView>
         </LinearLayout>
     </FrameLayout>
 

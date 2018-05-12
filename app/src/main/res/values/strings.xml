@@ -4,6 +4,7 @@
     <string name="show_cycles">Moje cykle</string>
     <string name="settings">Ustawienia</string>
     <string name="new_day">Nowy dzień</string>
+    <string name="new_cycle">Nowy cykl</string>
     <string name="temperature_label"><u>Temperatura</u></string>
     <string name="mucus_label"><u>Śluz</u></string>
     <string name="cervix_label"><u>Szyjka</u></string>

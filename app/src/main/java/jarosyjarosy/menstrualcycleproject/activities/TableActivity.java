@@ -1,6 +1,7 @@
 package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
@@ -9,9 +10,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import jarosyjarosy.menstrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.config.VerticalTextView;
 import jarosyjarosy.menstrualcycleproject.repository.MenstrualCycleDbHelper;
 
 import java.io.File;
@@ -34,6 +41,7 @@ public class TableActivity extends AppCompatActivity {
         menstrualCycleDbHelper = new MenstrualCycleDbHelper(this);
 
         setUpActionBar();
+        setUpTable();
     }
 
     public void setUpActionBar() {
@@ -78,6 +86,34 @@ public class TableActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setUpTable() {
+        GridLayout.LayoutParams params;
+        GridLayout table = (GridLayout) findViewById(R.id.table);
+        table.setColumnCount(3);
+        table.setOrientation(GridLayout.HORIZONTAL);
+
+
+        TextView date = new TextView(this);
+        date.setText("DATA:");
+        date.setBackgroundResource(R.drawable.cell_shape);
+        table.addView(date);
+        params = new GridLayout.LayoutParams(date.getLayoutParams());
+        params.columnSpec = GridLayout.spec(0, 3);
+        date.setLayoutParams(params);
+
+        VerticalTextView temperature = new VerticalTextView(this);
+        temperature.setText("TEMPERATURA");
+        temperature.set
+        temperature.setBackgroundResource(R.drawable.cell_shape);
+        table.addView(temperature);
+        params = new GridLayout.LayoutParams(temperature.getLayoutParams());
+        params.rowSpec = GridLayout.spec(0, 27);
+        temperature.setLayoutParams(params);
+
+
+
+    }
+
     public void openDayForm(View view) {
         Boolean setDate = false;
         if (view.getTag() != null) {
@@ -89,6 +125,7 @@ public class TableActivity extends AppCompatActivity {
         intent.putExtras(b);
         startActivity(intent);
     }
+
     public void openTable(View view) {
         Intent intent = new Intent(TableActivity.this, TableActivity.class);
         startActivity(intent);
