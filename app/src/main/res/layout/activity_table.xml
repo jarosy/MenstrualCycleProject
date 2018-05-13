@@ -29,9 +29,9 @@
                     <LinearLayout android:layout_width="match_parent"
                                   android:layout_height="match_parent">
                         <GridLayout android:id="@+id/table"
-                                    android:rowCount="47"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:background="#FFFFFF">
 
                         </GridLayout>
                     </LinearLayout>

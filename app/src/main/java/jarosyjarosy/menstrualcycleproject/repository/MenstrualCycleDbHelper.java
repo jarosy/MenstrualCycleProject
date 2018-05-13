@@ -3,6 +3,7 @@ package jarosyjarosy.menstrualcycleproject.repository;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class MenstrualCycleDbHelper extends SQLiteOpenHelper {
 
@@ -12,6 +13,7 @@ public class MenstrualCycleDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        Log.d("SQLiteManager","Database creating...");
         sqLiteDatabase.execSQL(
                         "create table cycles(" +
                         "cycle_id integer primary key autoincrement," +
@@ -44,6 +46,7 @@ public class MenstrualCycleDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        Log.d("SQLiteManager", "Database updating...");
 
     }
 }

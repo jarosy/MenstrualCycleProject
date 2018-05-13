@@ -10,13 +10,14 @@ public class Day {
     private Float temperature;
     private String bleeding;
     private List<String> mucus;
-    private String dilationOfCervix;
-    private String positionOfCervix;
-    private String hardnessOfCervix;
+    private Integer dilationOfCervix;
+    private Integer positionOfCervix;
+    private Character hardnessOfCervix;
     private Boolean ovulatoryPain;
     private Boolean tensionInTheBreasts;
     private String otherSymptoms;
     private Boolean intercourse;
+    private Integer cycleId;
 
     public Integer getDayId() {
         return dayId;
@@ -66,29 +67,17 @@ public class Day {
         this.mucus = mucus;
     }
 
-    public String getDilationOfCervix() {
-        return dilationOfCervix;
-    }
+    public Integer getDilationOfCervix() { return dilationOfCervix; }
 
-    public void setDilationOfCervix(String dilationOfCervix) {
-        this.dilationOfCervix = dilationOfCervix;
-    }
+    public void setDilationOfCervix(Integer dilationOfCervix) { this.dilationOfCervix = dilationOfCervix; }
 
-    public String getPositionOfCervix() {
-        return positionOfCervix;
-    }
+    public Integer getPositionOfCervix() { return positionOfCervix; }
 
-    public void setPositionOfCervix(String positionOfCervix) {
-        this.positionOfCervix = positionOfCervix;
-    }
+    public void setPositionOfCervix(Integer positionOfCervix) { this.positionOfCervix = positionOfCervix; }
 
-    public String getHardnessOfCervix() {
-        return hardnessOfCervix;
-    }
+    public Character getHardnessOfCervix() { return hardnessOfCervix; }
 
-    public void setHardnessOfCervix(String hardnessOfCervix) {
-        this.hardnessOfCervix = hardnessOfCervix;
-    }
+    public void setHardnessOfCervix(Character hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
 
     public Boolean getOvulatoryPain() {
         return ovulatoryPain;
@@ -122,4 +111,7 @@ public class Day {
         this.intercourse = intercourse;
     }
 
+    public Integer getCycleId() { return cycleId; }
+
+    public void setCycleId(Integer cycleId) { this.cycleId = cycleId; }
 }

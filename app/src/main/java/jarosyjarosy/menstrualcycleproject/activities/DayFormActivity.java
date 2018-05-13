@@ -23,6 +23,7 @@ public class DayFormActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionBar actionbar;
     private DrawerLayout drawerLayout;
+    private Bundle bundle;
     private Calendar calendar = Calendar.getInstance();
     private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private EditText datePicker;
@@ -71,7 +72,13 @@ public class DayFormActivity extends AppCompatActivity {
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
                         if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
-                            openDayForm(navigationView);
+                            boolean withDate = false;
+                            if (bundle != null) {
+                                withDate = bundle.getBoolean("setDate");
+                            }
+                            if(withDate){
+                                openDayForm(navigationView);
+                            }
                         }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openTable(navigationView);
@@ -93,10 +100,10 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     private void setUpDate() {
-        Bundle b = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         boolean setDate = false;
-        if (b != null) {
-            setDate = b.getBoolean("setDate");
+        if (bundle != null) {
+            setDate = bundle.getBoolean("setDate");
         }
 
         datePicker = (EditText) findViewById(R.id.dateEdit);
