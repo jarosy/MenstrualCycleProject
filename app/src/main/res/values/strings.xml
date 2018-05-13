@@ -7,6 +7,9 @@
     <string name="new_cycle">Nowy cykl</string>
     <string name="temperature_label"><u>Temperatura</u></string>
     <string name="mucus_label"><u>Śluz</u></string>
+    <string name="bleeding_label"><u>Krwawienie</u></string>
+    <string name="spotting">Plamienie</string>
+    <string name="bleeding">Krwawienie</string>
     <string name="cervix_label"><u>Szyjka</u></string>
     <string name="cervix_label_dilation">Rozwarcie</string>
     <string name="cervix_label_position">Pozycja</string>

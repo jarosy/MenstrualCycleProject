@@ -103,14 +103,27 @@ public class TableActivity extends AppCompatActivity {
 
         VerticalTextView temperature = new VerticalTextView(this);
         temperature.setText("TEMPERATURA");
-        temperature.set
         temperature.setBackgroundResource(R.drawable.cell_shape);
         table.addView(temperature);
         params = new GridLayout.LayoutParams(temperature.getLayoutParams());
         params.rowSpec = GridLayout.spec(0, 27);
         temperature.setLayoutParams(params);
 
+        TextView day = new TextView(this);
+        day.setText("DZIEŃ CYKLU");
+        day.setBackgroundResource(R.drawable.cell_shape);
+        table.addView(day);
+        params = new GridLayout.LayoutParams(day.getLayoutParams());
+        params.columnSpec = GridLayout.spec(0, 3);
+        day.setLayoutParams(params);
 
+        TextView bleeding = new TextView(this);
+        bleeding.setText("KRWAWIENIE/PLAMIENIE");
+        bleeding.setBackgroundResource(R.drawable.cell_shape);
+        table.addView(bleeding);
+        params = new GridLayout.LayoutParams(bleeding.getLayoutParams());
+        params.columnSpec = GridLayout.spec(0, 3);
+        bleeding.setLayoutParams(params);
 
     }
 

@@ -148,12 +148,12 @@ public class DayFormActivity extends AppCompatActivity {
         cervixView = (ImageView) findViewById(R.id.cervixCanvas);
         cervixPaint.setColor(Color.BLACK);
         cervixPaint.setStyle(Paint.Style.STROKE);
-        cervixPaint.setStrokeWidth(10);
+        cervixPaint.setStrokeWidth(12);
         cervixBitmap = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         cervixCanvas = new Canvas(cervixBitmap);
-        circleRadius = 20;
-        circleY = 105;
+        circleRadius = 8;
+        circleY = 115;
 
         cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
 
@@ -161,7 +161,7 @@ public class DayFormActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleRadius = 20 + 3*i;
+                circleRadius = 8 + 3*i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
                 cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
             }
@@ -176,7 +176,7 @@ public class DayFormActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleY = 105 - 5*i;
+                circleY = 115 - 6*i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
                 cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
             }
