@@ -16,7 +16,6 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.VerticalTextView;
-import jarosyjarosy.menstrualcycleproject.repository.MenstrualCycleDbHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,20 +28,18 @@ public class TableActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private ActionBar actionbar;
-    private MenstrualCycleDbHelper menstrualCycleDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table);
 
-        menstrualCycleDbHelper = new MenstrualCycleDbHelper(this);
         setUpActionBar();
         setUpTable();
     }
 
     public void getDatabaseStub() {
-        menstrualCycleDbHelper = new MenstrualCycleDbHelper(this);
+
     }
 
     public void setUpActionBar() {
@@ -69,6 +66,9 @@ public class TableActivity extends AppCompatActivity {
                             openDayForm(navigationView);
                         }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                            openList(navigationView);
+                        }
+                        if (menuItem.getTitle().toString().matches("Tabelka")) {
                             //openTable(navigationView);
                         }
 
@@ -302,6 +302,11 @@ public class TableActivity extends AppCompatActivity {
 
     public void openTable(View view) {
         Intent intent = new Intent(TableActivity.this, TableActivity.class);
+        startActivity(intent);
+    }
+
+    private void openList(View view) {
+        Intent intent = new Intent(TableActivity.this, ListActivity.class);
         startActivity(intent);
     }
 

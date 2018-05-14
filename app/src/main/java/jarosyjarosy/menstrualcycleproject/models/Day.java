@@ -4,26 +4,26 @@ import java.util.Date;
 import java.util.List;
 
 public class Day {
-    private Integer dayId;
+    private Long dayId;
     private Date createDate;
     private Integer dayOfCycle;
     private Float temperature;
     private String bleeding;
-    private List<String> mucus;
+    private String mucus;
     private Integer dilationOfCervix;
     private Integer positionOfCervix;
-    private Character hardnessOfCervix;
+    private String hardnessOfCervix;
     private Boolean ovulatoryPain;
     private Boolean tensionInTheBreasts;
     private String otherSymptoms;
     private Boolean intercourse;
-    private Integer cycleId;
+    private Long cycleId;
 
-    public Integer getDayId() {
+    public Long getDayId() {
         return dayId;
     }
 
-    public void setDayId(Integer dayId) {
+    public void setDayId(Long dayId) {
         this.dayId = dayId;
     }
 
@@ -59,13 +59,9 @@ public class Day {
         this.bleeding = bleeding;
     }
 
-    public List<String> getMucus() {
-        return mucus;
-    }
+    public String getMucus() { return mucus; }
 
-    public void setMucus(List<String> mucus) {
-        this.mucus = mucus;
-    }
+    public void setMucus(String mucus) { this.mucus = mucus; }
 
     public Integer getDilationOfCervix() { return dilationOfCervix; }
 
@@ -75,9 +71,9 @@ public class Day {
 
     public void setPositionOfCervix(Integer positionOfCervix) { this.positionOfCervix = positionOfCervix; }
 
-    public Character getHardnessOfCervix() { return hardnessOfCervix; }
+    public String getHardnessOfCervix() { return hardnessOfCervix; }
 
-    public void setHardnessOfCervix(Character hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
+    public void setHardnessOfCervix(String hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
 
     public Boolean getOvulatoryPain() {
         return ovulatoryPain;
@@ -111,7 +107,7 @@ public class Day {
         this.intercourse = intercourse;
     }
 
-    public Integer getCycleId() { return cycleId; }
+    public Long getCycleId() { return cycleId; }
 
-    public void setCycleId(Integer cycleId) { this.cycleId = cycleId; }
+    public void setCycleId(Long cycleId) { this.cycleId = cycleId; }
 }

@@ -17,6 +17,7 @@ import jarosyjarosy.menstrualcycleproject.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class DayFormActivity extends AppCompatActivity {
 
@@ -25,7 +26,7 @@ public class DayFormActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private Bundle bundle;
     private Calendar calendar = Calendar.getInstance();
-    private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
     private EditText datePicker;
     private NumberPicker temperaturePicker;
     private SeekBar seekBarPosition;
@@ -81,6 +82,9 @@ public class DayFormActivity extends AppCompatActivity {
                             }
                         }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                            openList(navigationView);
+                        }
+                        if (menuItem.getTitle().toString().matches("Tabelka")) {
                             openTable(navigationView);
                         }
 
@@ -210,6 +214,11 @@ public class DayFormActivity extends AppCompatActivity {
 
     private void openTable(View view) {
         Intent intent = new Intent(DayFormActivity.this, TableActivity.class);
+        startActivity(intent);
+    }
+
+    private void openList(View view) {
+        Intent intent = new Intent(DayFormActivity.this, ListActivity.class);
         startActivity(intent);
     }
 

@@ -25,6 +25,9 @@
         <activity
                 android:name=".activities.TableActivity">
         </activity>
+        <activity
+                android:name=".activities.ListActivity">
+        </activity>
     </application>
 
 </manifest>
