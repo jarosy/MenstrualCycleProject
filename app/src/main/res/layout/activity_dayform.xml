@@ -78,16 +78,16 @@
                             android:orientation="horizontal">
 
                         <RadioButton
-                                android:id="@+id/radioBleedNo"
-                                android:text="@string/no"
+                                android:id="@+id/radioBleedYes"
+                                android:text="@string/yes"
                                 android:textSize="7pt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="false"/>
 
                         <RadioButton
-                                android:id="@+id/radioBleed"
-                                android:text="@string/bleeding"
+                                android:id="@+id/radioBleedNo"
+                                android:text="@string/no"
                                 android:textSize="7pt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

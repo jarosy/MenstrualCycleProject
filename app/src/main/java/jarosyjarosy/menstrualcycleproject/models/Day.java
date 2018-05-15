@@ -1,18 +1,20 @@
 package jarosyjarosy.menstrualcycleproject.models;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import java.util.List;
 
 public class Day {
     private Long dayId;
-    private Date createDate;
+    private DateTime createDate;
     private Integer dayOfCycle;
     private Float temperature;
-    private String bleeding;
-    private String mucus;
+    private BleedingType bleeding;
+    private List<MucusType> mucus;
     private Integer dilationOfCervix;
     private Integer positionOfCervix;
-    private String hardnessOfCervix;
+    private CervixHardnessType hardnessOfCervix;
     private Boolean ovulatoryPain;
     private Boolean tensionInTheBreasts;
     private String otherSymptoms;
@@ -27,11 +29,11 @@ public class Day {
         this.dayId = dayId;
     }
 
-    public Date getCreateDate() {
+    public DateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(DateTime createDate) {
         this.createDate = createDate;
     }
 
@@ -51,17 +53,17 @@ public class Day {
         this.temperature = temperature;
     }
 
-    public String getBleeding() {
+    public BleedingType getBleeding() {
         return bleeding;
     }
 
-    public void setBleeding(String bleeding) {
+    public void setBleeding(BleedingType bleeding) {
         this.bleeding = bleeding;
     }
 
-    public String getMucus() { return mucus; }
+    public List<MucusType> getMucus() { return mucus; }
 
-    public void setMucus(String mucus) { this.mucus = mucus; }
+    public void setMucus(List<MucusType> mucus) { this.mucus = mucus; }
 
     public Integer getDilationOfCervix() { return dilationOfCervix; }
 
@@ -71,9 +73,9 @@ public class Day {
 
     public void setPositionOfCervix(Integer positionOfCervix) { this.positionOfCervix = positionOfCervix; }
 
-    public String getHardnessOfCervix() { return hardnessOfCervix; }
+    public CervixHardnessType getHardnessOfCervix() { return hardnessOfCervix; }
 
-    public void setHardnessOfCervix(String hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
+    public void setHardnessOfCervix(CervixHardnessType hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
 
     public Boolean getOvulatoryPain() {
         return ovulatoryPain;

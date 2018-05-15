@@ -14,10 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
+import org.joda.time.DateTime;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 public class DayFormActivity extends AppCompatActivity {
 
@@ -25,8 +24,6 @@ public class DayFormActivity extends AppCompatActivity {
     private ActionBar actionbar;
     private DrawerLayout drawerLayout;
     private Bundle bundle;
-    private Calendar calendar = Calendar.getInstance();
-    private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
     private EditText datePicker;
     private NumberPicker temperaturePicker;
     private SeekBar seekBarPosition;
@@ -77,7 +74,7 @@ public class DayFormActivity extends AppCompatActivity {
                             if (bundle != null) {
                                 withDate = bundle.getBoolean("setDate");
                             }
-                            if(withDate){
+                            if (withDate) {
                                 openDayForm(navigationView);
                             }
                         }
@@ -112,8 +109,7 @@ public class DayFormActivity extends AppCompatActivity {
 
         datePicker = (EditText) findViewById(R.id.dateEdit);
         if (setDate) {
-            calendar.add(Calendar.DATE, 1);
-            datePicker.setText(appDateFormat.format(calendar.getTime()));
+            datePicker.setText(new DateTime().toString());
             datePicker.setEnabled(false);
         }
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -122,10 +118,8 @@ public class DayFormActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                datePicker.setText(appDateFormat.format(calendar.getTime()));
+                DateTime setDate = new DateTime(year, monthOfYear, dayOfMonth, 0, 0);
+                datePicker.setText(setDate.toString());
             }
 
         };
@@ -134,9 +128,9 @@ public class DayFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(DayFormActivity.this, date, calendar
-                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(DayFormActivity.this, date, DateTime.now().getYear(),
+                        DateTime.now().getMonthOfYear(),
+                        DateTime.now().getDayOfMonth()).show();
             }
         });
     }
@@ -166,37 +160,41 @@ public class DayFormActivity extends AppCompatActivity {
         circleRadius = 8;
         circleY = 115;
 
-        cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+        cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
 
         seekBarDilation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleRadius = 8 + 3*i;
+                circleRadius = 8 + 3 * i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+                cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
         seekBarPosition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleY = 115 - 6*i;
+                circleY = 115 - 6 * i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                cervixCanvas.drawCircle(80, circleY, circleRadius ,cervixPaint);
+                cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
 

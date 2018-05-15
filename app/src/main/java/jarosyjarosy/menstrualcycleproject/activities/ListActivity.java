@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.ExpandableListAdapter;
+import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,8 @@ public class ListActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private ActionBar actionbar;
+
+    private DatabaseAdapter dbAdapter;
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -100,42 +103,34 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void prepareListData() {
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
+
+
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        listDataHeader.add(dbAdapter.getCycle(1L).getStartDate().toString());
+        listDataHeader.add(dbAdapter.getCycle(2L).getStartDate().toString());
+        listDataHeader.add(dbAdapter.getCycle(3L).getStartDate().toString());
 
         // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        List<String> cycle1 = new ArrayList<String>();
+        cycle1.add(dbAdapter.getDay(1L).getDayOfCycle().toString());
+        cycle1.add(dbAdapter.getDay(2L).getDayOfCycle().toString());
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+        List<String> cycle2 = new ArrayList<String>();
+        cycle2.add(dbAdapter.getDay(3L).getBleeding().toString());
+        cycle2.add(dbAdapter.getDay(4L).getBleeding().toString());
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
+        List<String> cycle3 = new ArrayList<String>();
+        cycle3.add(dbAdapter.getDay(5L).getHardnessOfCervix().toString());
 
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+
+        listDataChild.put(listDataHeader.get(0), cycle1); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), cycle2);
+        listDataChild.put(listDataHeader.get(2), cycle3);
     }
 
     public void openDayForm(View view) {

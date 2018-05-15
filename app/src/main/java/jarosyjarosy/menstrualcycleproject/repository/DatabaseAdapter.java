@@ -7,13 +7,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import jarosyjarosy.menstrualcycleproject.models.Cycle;
-import jarosyjarosy.menstrualcycleproject.models.Day;
+import jarosyjarosy.menstrualcycleproject.models.*;
+import org.joda.time.DateTime;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class DatabaseAdapter {
 
@@ -34,12 +34,10 @@ public class DatabaseAdapter {
     private static final String DAY_KEY_DILATION_OF_CERVIX = "dilation_of_cervix";
     private static final String DAY_KEY_POSITION_OF_CERVIX = "position_of_cervix";
     private static final String DAY_KEY_HARDNESS_OF_CERVIX = "hardness_of_cervix";
-    private static final String DAY_KEY_OVULATORY_PAIN = "ovulatory pain";
+    private static final String DAY_KEY_OVULATORY_PAIN = "ovulatory_pain";
     private static final String DAY_KEY_TENSION_IN_BREASTS = "tension_in_breasts";
     private static final String DAY_KEY_OTHER_SYMPTOMS = "other_symptoms";
     private static final String DAY_KEY_INTERCOURSE = "intercourse";
-
-    private SimpleDateFormat appDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 
     private SQLiteDatabase db;
     private Context context;
@@ -56,7 +54,7 @@ public class DatabaseAdapter {
                     "create table cycles(" +
                             CYCLE_KEY_ID + " integer primary key autoincrement," +
                             CYCLE_KEY_START_DATE + " text," +
-                            CYCLE_KEY_END_DATE+ " text," +
+                            CYCLE_KEY_END_DATE + " text," +
                             CYCLE_KEY_PEAK_OF_MUCUS + " integer," +
                             CYCLE_KEY_PEAK_OF_CERVIX + " integer" +
                             ");"
@@ -67,7 +65,7 @@ public class DatabaseAdapter {
                             DAY_KEY_ID + " integer primary key autoincrement," +
                             DAY_KEY_CREATE_DATE + " text," +
                             DAY_KEY_DAY_OF_CYCLE + " integer," +
-                            DAY_KEY_TEMPERATURE+ " real," +
+                            DAY_KEY_TEMPERATURE + " real," +
                             DAY_KEY_BLEEDING + " text," +
                             DAY_KEY_MUCUS + " mucus text," +
                             DAY_KEY_DILATION_OF_CERVIX + " integer," +
@@ -79,7 +77,7 @@ public class DatabaseAdapter {
                             DAY_KEY_INTERCOURSE + " integer," +
                             CYCLE_KEY_ID + " integer," +
                             "foreign key (" + CYCLE_KEY_ID + ") references cycles(" + CYCLE_KEY_ID + "));");
-            Log.d("SQLiteManager","Database creating...");
+            Log.d("SQLiteManager", "Database creating...");
 
         }
 
@@ -88,6 +86,10 @@ public class DatabaseAdapter {
             Log.d("SQLiteManager", "Database updating...");
 
         }
+    }
+
+    public DatabaseAdapter(Context context) {
+        this.context = context;
     }
 
     public DatabaseAdapter open() {
@@ -107,24 +109,37 @@ public class DatabaseAdapter {
     public long insertCycle(Cycle newCycle) {
         ContentValues newCycleValues = new ContentValues();
         newCycleValues.put(CYCLE_KEY_START_DATE, newCycle.getStartDate().toString());
-        return  db.insert("cycles",null, newCycleValues);
+        return db.insert("cycles", null, newCycleValues);
     }
 
     public long insertDay(Day newDay) {
         ContentValues newDayValues = new ContentValues();
+        newDayValues.put(DAY_KEY_CREATE_DATE, newDay.getCreateDate().toString());
         newDayValues.put(DAY_KEY_DAY_OF_CYCLE, newDay.getDayOfCycle());
         newDayValues.put(DAY_KEY_TEMPERATURE, newDay.getTemperature());
-        newDayValues.put(DAY_KEY_BLEEDING, newDay.getBleeding());
-        newDayValues.put(DAY_KEY_MUCUS, newDay.getMucus());
+        newDayValues.put(DAY_KEY_BLEEDING, newDay.getBleeding().toString());
+
+        List<MucusType> typeList = newDay.getMucus();
+        ArrayList<String> list = new ArrayList<String>();
+        for (MucusType type : typeList) {
+            list.add(type.toString());
+        }
+        StringBuilder sb = new StringBuilder();
+        for(String s : list) {
+            sb.append(s);
+            sb.append(",");
+        }
+
+        newDayValues.put(DAY_KEY_MUCUS, sb.toString());
         newDayValues.put(DAY_KEY_DILATION_OF_CERVIX, newDay.getDilationOfCervix());
         newDayValues.put(DAY_KEY_POSITION_OF_CERVIX, newDay.getPositionOfCervix());
-        newDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, newDay.getHardnessOfCervix());
+        newDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, newDay.getHardnessOfCervix().toString());
         newDayValues.put(DAY_KEY_OVULATORY_PAIN, newDay.getOvulatoryPain());
         newDayValues.put(DAY_KEY_TENSION_IN_BREASTS, newDay.getTensionInTheBreasts());
         newDayValues.put(DAY_KEY_OTHER_SYMPTOMS, newDay.getOtherSymptoms());
         newDayValues.put(DAY_KEY_INTERCOURSE, newDay.getIntercourse());
         newDayValues.put(CYCLE_KEY_ID, newDay.getCycleId());
-                return  db.insert("days",null, newDayValues);
+        return db.insert("days", null, newDayValues);
     }
 
     public boolean updateCycle(Cycle cycle) {
@@ -134,7 +149,7 @@ public class DatabaseAdapter {
         updatedCycleValues.put(CYCLE_KEY_END_DATE, cycle.getEndDate().toString());
         updatedCycleValues.put(CYCLE_KEY_PEAK_OF_MUCUS, cycle.getPeakOfMucus());
         updatedCycleValues.put(CYCLE_KEY_PEAK_OF_CERVIX, cycle.getPeakOfCervix());
-        return db.update("cycles", updatedCycleValues, where,null) > 0;
+        return db.update("cycles", updatedCycleValues, where, null) > 0;
     }
 
     public boolean updateDay(Day day) {
@@ -142,11 +157,23 @@ public class DatabaseAdapter {
         ContentValues updatedDayValues = new ContentValues();
         updatedDayValues.put(DAY_KEY_DAY_OF_CYCLE, day.getDayOfCycle());
         updatedDayValues.put(DAY_KEY_TEMPERATURE, day.getTemperature());
-        updatedDayValues.put(DAY_KEY_BLEEDING, day.getBleeding());
-        updatedDayValues.put(DAY_KEY_MUCUS, day.getMucus());
+        updatedDayValues.put(DAY_KEY_BLEEDING, day.getBleeding().toString());
+
+        List<MucusType> typeList = day.getMucus();
+        ArrayList<String> list = new ArrayList<String>();
+        for (MucusType type : typeList) {
+            list.add(type.toString());
+        }
+        StringBuilder sb = new StringBuilder();
+        for(String s : list) {
+            sb.append(s);
+            sb.append(",");
+        }
+
+        updatedDayValues.put(DAY_KEY_MUCUS, sb.toString());
         updatedDayValues.put(DAY_KEY_DILATION_OF_CERVIX, day.getDilationOfCervix());
         updatedDayValues.put(DAY_KEY_POSITION_OF_CERVIX, day.getPositionOfCervix());
-        updatedDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, day.getHardnessOfCervix());
+        updatedDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, day.getHardnessOfCervix().toString());
         updatedDayValues.put(DAY_KEY_OVULATORY_PAIN, day.getOvulatoryPain());
         updatedDayValues.put(DAY_KEY_TENSION_IN_BREASTS, day.getTensionInTheBreasts());
         updatedDayValues.put(DAY_KEY_OTHER_SYMPTOMS, day.getOtherSymptoms());
@@ -154,12 +181,12 @@ public class DatabaseAdapter {
         return db.update("days", updatedDayValues, where, null) > 0;
     }
 
-    public boolean deleteDay(long id){
+    public boolean deleteDay(long id) {
         String where = DAY_KEY_ID + "=" + id;
         return db.delete("days", where, null) > 0;
     }
 
-    public boolean deleteCycle(long id){
+    public boolean deleteCycle(long id) {
         String where = CYCLE_KEY_ID + "=" + id;
         return db.delete("cycle", where, null) > 0;
     }
@@ -172,11 +199,11 @@ public class DatabaseAdapter {
 
     public Cursor getAllDaysFromCycle(long cycleId) {
         String[] columns = {DAY_KEY_CREATE_DATE, DAY_KEY_DAY_OF_CYCLE, DAY_KEY_TEMPERATURE, DAY_KEY_BLEEDING, DAY_KEY_MUCUS,
-        DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX,DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
-        DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE};
+                DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX, DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
+                DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE};
         String where = CYCLE_KEY_ID + "=" + cycleId;
         String orderBy = DAY_KEY_DAY_OF_CYCLE + "asc";
-        return  db.query("days", columns, where, null, null, null, orderBy);
+        return db.query("days", columns, where, null, null, null, orderBy);
     }
 
     public Cycle getCycle(long id) {
@@ -184,46 +211,45 @@ public class DatabaseAdapter {
         String where = CYCLE_KEY_ID + "=" + id;
         Cursor cursor = db.query("cycles", columns, where, null, null, null, null);
         Cycle cycle = new Cycle();
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             cycle.setCycleId(id);
-            try {
-                cycle.setStartDate(appDateFormat.parse(cursor.getString(1)));
-                cycle.setEndDate(appDateFormat.parse(cursor.getString(2)));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            cycle.setStartDate(DateTime.parse(cursor.getString(0)));
+            if(cursor.getString(1) != null) {
+                cycle.setEndDate(DateTime.parse(cursor.getString(1)));
             }
-            cycle.setPeakOfMucus(cursor.getInt(3));
-            cycle.setPeakOfCervix(cursor.getInt(4));
+            cycle.setPeakOfMucus(cursor.getInt(2));
+            cycle.setPeakOfCervix(cursor.getInt(3));
         }
         return cycle;
     }
 
     public Day getDay(long id) {
         String[] columns = {DAY_KEY_CREATE_DATE, DAY_KEY_DAY_OF_CYCLE, DAY_KEY_TEMPERATURE, DAY_KEY_BLEEDING, DAY_KEY_MUCUS,
-                DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX,DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
+                DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX, DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
                 DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE, CYCLE_KEY_ID};
         String where = DAY_KEY_ID + "=" + id;
         Cursor cursor = db.query("days", columns, where, null, null, null, null);
         Day day = new Day();
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             day.setDayId(id);
-            try {
-                day.setCreateDate(appDateFormat.parse(cursor.getString(1)));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            day.setCreateDate(DateTime.parse(cursor.getString(0)));
+            day.setDayOfCycle(cursor.getInt(1));
+            day.setTemperature(cursor.getFloat(2));
+            day.setBleeding(BleedingType.fromString(cursor.getString(3)));
+            String[] mucusString = cursor.getString(4).split(",");
+            List<MucusType> mucusList= new ArrayList<>();
+            for (String type : mucusString) {
+                mucusList.add(MucusType.fromString(type));
             }
-            day.setDayOfCycle(cursor.getInt(2));
-            day.setTemperature(cursor.getFloat(3));
-            day.setBleeding(cursor.getString(4));
-            day.setMucus(cursor.getString(5));
-            day.setDilationOfCervix(cursor.getInt(6));
-            day.setPositionOfCervix(cursor.getInt(7));
-            day.setHardnessOfCervix(cursor.getString(8));
-            day.setOvulatoryPain(cursor.getInt(9) > 0);
-            day.setTensionInTheBreasts(cursor.getInt(10) > 0);
-            day.setOtherSymptoms(cursor.getString(11));
-            day.setIntercourse(cursor.getInt(12) > 0);
-            day.setCycleId(cursor.getLong(13));
+            day.setMucus(mucusList);
+            day.setDilationOfCervix(cursor.getInt(5));
+            day.setPositionOfCervix(cursor.getInt(6));
+            day.setHardnessOfCervix(CervixHardnessType.fromString(cursor.getString(7)));
+            day.setOvulatoryPain(cursor.getInt(8) > 0);
+            day.setTensionInTheBreasts(cursor.getInt(9) > 0);
+            day.setOtherSymptoms(cursor.getString(10));
+            day.setIntercourse(cursor.getInt(11) > 0);
+            day.setCycleId(cursor.getLong(12));
         }
         return day;
     }

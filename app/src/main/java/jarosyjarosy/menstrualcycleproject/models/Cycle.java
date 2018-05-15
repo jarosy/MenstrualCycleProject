@@ -1,11 +1,11 @@
 package jarosyjarosy.menstrualcycleproject.models;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Cycle {
     private Long cycleId;
-    private Date startDate;
-    private Date endDate;
+    private DateTime startDate;
+    private DateTime endDate;
     private Integer peakOfMucus;
     private Integer peakOfCervix;
 
@@ -17,19 +17,19 @@ public class Cycle {
         this.cycleId = cycleId;
     }
 
-    public Date getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 
