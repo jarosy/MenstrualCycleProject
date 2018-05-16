@@ -2,7 +2,7 @@ package jarosyjarosy.menstrualcycleproject.models;
 
 public enum MucusType {
     WET("Mokro / Ślisko"),
-    STRETCHY("Rozciąglwy"),
+    STRETCHY("Rozciągliwy"),
     TRANSPARENT("Przejrzysty"),
     HUMID("Wilgotno"),
     STICKY("Lepki / Gęsty"),

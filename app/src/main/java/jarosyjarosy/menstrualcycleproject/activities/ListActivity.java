@@ -1,6 +1,7 @@
 package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,7 +15,12 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.ExpandableListAdapter;
+import jarosyjarosy.menstrualcycleproject.models.Cycle;
+import jarosyjarosy.menstrualcycleproject.models.Day;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +37,11 @@ public class ListActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionBar actionbar;
 
+    DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+
     private DatabaseAdapter dbAdapter;
+    private Cursor cycleCursor;
+    private Cursor dayCursor;
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -103,34 +113,41 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void prepareListData() {
-        dbAdapter = new DatabaseAdapter(this);
-        dbAdapter.open();
-
-
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
-        // Adding child data
-        listDataHeader.add(dbAdapter.getCycle(1L).getStartDate().toString());
-        listDataHeader.add(dbAdapter.getCycle(2L).getStartDate().toString());
-        listDataHeader.add(dbAdapter.getCycle(3L).getStartDate().toString());
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
 
-        // Adding child data
-        List<String> cycle1 = new ArrayList<String>();
-        cycle1.add(dbAdapter.getDay(1L).getDayOfCycle().toString());
-        cycle1.add(dbAdapter.getDay(2L).getDayOfCycle().toString());
-
-        List<String> cycle2 = new ArrayList<String>();
-        cycle2.add(dbAdapter.getDay(3L).getBleeding().toString());
-        cycle2.add(dbAdapter.getDay(4L).getBleeding().toString());
-
-        List<String> cycle3 = new ArrayList<String>();
-        cycle3.add(dbAdapter.getDay(5L).getHardnessOfCervix().toString());
-
-
-        listDataChild.put(listDataHeader.get(0), cycle1); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), cycle2);
-        listDataChild.put(listDataHeader.get(2), cycle3);
+        List<Cycle> cycleList = new ArrayList<>();
+        cycleCursor = dbAdapter.getAllCycles();
+        cycleCursor.moveToFirst();
+        if(cycleCursor != null && cycleCursor.moveToFirst()) {
+            do {
+                Cycle cycle = dbAdapter.getCycle(cycleCursor.getLong(0));
+//                cycle.setCycleId(cycleCursor.getLong(0));
+//                cycle.setStartDate(DateTime.parse(cycleCursor.getString(1)));
+//                if (cycleCursor.getString(2) != null) {
+//                    cycle.setEndDate(DateTime.parse(cycleCursor.getString(2)));
+//                }
+//                cycle.setPeakOfMucus(cycleCursor.getInt(3));
+//                cycle.setPeakOfCervix(cycleCursor.getInt(4));
+                cycleList.add(cycle);
+            } while (cycleCursor.moveToNext());
+        }
+        int cycleCounter = 0;
+        for (Cycle cycle : cycleList) {
+            listDataHeader.add(appDateFormat.print(cycle.getStartDate()) + " - " +  ((cycle.getEndDate() != null ) ? appDateFormat.print(cycle.getEndDate()) : "obecnie"));
+            List<String> dayStringList = new ArrayList<>();
+            dayCursor = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
+            dayCursor.moveToFirst();
+            do {
+                Day day = dbAdapter.getDay(dayCursor.getLong(0));
+                dayStringList.add(day.getDayOfCycle() + " dzień | " + day.getTemperature() + "℃");
+            } while (dayCursor.moveToNext());
+            listDataChild.put(listDataHeader.get(cycleCounter),dayStringList);
+            cycleCounter++;
+        }
     }
 
     public void openDayForm(View view) {

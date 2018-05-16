@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
 
@@ -28,6 +30,8 @@ public class DayFormActivity extends AppCompatActivity {
     private NumberPicker temperaturePicker;
     private SeekBar seekBarPosition;
     private SeekBar seekBarDilation;
+
+    DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
     private Canvas cervixCanvas;
     private Paint cervixPaint = new Paint();
@@ -109,7 +113,7 @@ public class DayFormActivity extends AppCompatActivity {
 
         datePicker = (EditText) findViewById(R.id.dateEdit);
         if (setDate) {
-            datePicker.setText(new DateTime().toString());
+            datePicker.setText(appDateFormat.print(new DateTime()));
             datePicker.setEnabled(false);
         }
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {

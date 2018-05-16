@@ -19,6 +19,8 @@ import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.models.*;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionbar;
     private Button newDayButton;
     private Button newCycleButton;
+
+    DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+
     private DatabaseAdapter dbAdapter;
 
     @Override
