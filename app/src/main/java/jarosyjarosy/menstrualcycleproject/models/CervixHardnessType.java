@@ -17,10 +17,14 @@ public enum CervixHardnessType {
     }
 
     public static CervixHardnessType fromString(String text) {
-        for(CervixHardnessType b : CervixHardnessType.values()) {
-            if (b.text.equalsIgnoreCase(text)) {
-                return b;
-            }
+        if (text == null) {
+            return null;
+        }
+        if (text.equalsIgnoreCase("Twarda")) {
+            return HARD;
+        }
+        if (text.equalsIgnoreCase("Miękka")) {
+            return SOFT;
         }
         return null;
     }

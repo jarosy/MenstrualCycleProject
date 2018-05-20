@@ -14,11 +14,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.VerticalTextView;
@@ -33,7 +32,6 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class TableActivity extends AppCompatActivity {
@@ -80,14 +78,8 @@ public class TableActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
-                            openDayForm(navigationView);
-                        }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openList(navigationView);
-                        }
-                        if (menuItem.getTitle().toString().matches("Tabelka")) {
-                            //openTable(navigationView);
                         }
 
                         return true;
@@ -338,7 +330,7 @@ public class TableActivity extends AppCompatActivity {
 
             TextView bleeding = new TextView(this);
             bleeding.setWidth(dpToPx(20));
-            addTextViewToTable(bleeding, day.getBleeding().toString(), day.getDayOfCycle() + 3, 1, 29, 1);
+            addTextViewToTable(bleeding, (day.getBleeding() != null) ? day.getBleeding().toString() : "", day.getDayOfCycle() + 3, 1, 29, 1);
 
             //tymczasowe
             TextView peekOfMucus = new TextView(this);
@@ -356,7 +348,7 @@ public class TableActivity extends AppCompatActivity {
 
             TextView cervixHardness = new TextView(this);
             cervixHardness.setWidth(dpToPx(20));
-            addTextViewToTable(cervixHardness, day.getHardnessOfCervix().toString(), day.getDayOfCycle() + 3, 1, 41, 1);
+            addTextViewToTable(cervixHardness, (day.getHardnessOfCervix() != null) ? day.getHardnessOfCervix().toString() : "", day.getDayOfCycle() + 3, 1, 41, 1);
 
             TextView ovulatoryPain = new TextView(this);
             ovulatoryPain.setWidth(dpToPx(20));

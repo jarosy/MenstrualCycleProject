@@ -20,9 +20,6 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activities.Pop">
-        </activity>
-        <activity
                 android:name=".activities.DayFormActivity">
         </activity>
         <activity

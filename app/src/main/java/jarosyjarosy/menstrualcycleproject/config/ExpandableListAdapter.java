@@ -14,6 +14,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import jarosyjarosy.menstrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.activities.DayFormActivity;
 import jarosyjarosy.menstrualcycleproject.activities.ListActivity;
 import jarosyjarosy.menstrualcycleproject.activities.MainActivity;
 import jarosyjarosy.menstrualcycleproject.activities.TableActivity;
@@ -111,6 +112,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(parent.getContext(), TableActivity.class);
+                Bundle b = new Bundle();
+                b.putLong("cycleId", cycle.getCycleId());
+                intent.putExtras(b);
+                parent.getContext().startActivity(intent);
+            }
+        });
+
+        Button addDayButton = (Button)convertView.findViewById(R.id.addDayButton);
+        addDayButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(parent.getContext(), DayFormActivity.class);
                 Bundle b = new Bundle();
                 b.putLong("cycleId", cycle.getCycleId());
                 intent.putExtras(b);

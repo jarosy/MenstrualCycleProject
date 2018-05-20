@@ -4,7 +4,9 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -14,20 +16,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
-import jarosyjarosy.menstrualcycleproject.models.BleedingType;
-import jarosyjarosy.menstrualcycleproject.models.CervixHardnessType;
-import jarosyjarosy.menstrualcycleproject.models.Day;
-import jarosyjarosy.menstrualcycleproject.models.MucusType;
+import jarosyjarosy.menstrualcycleproject.models.*;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static jarosyjarosy.menstrualcycleproject.R.id.radioGroupBleeding;
 import static jarosyjarosy.menstrualcycleproject.R.id.sticky_checkbox;
 
@@ -64,6 +70,7 @@ public class DayFormActivity extends AppCompatActivity {
     private float circleRadius;
 
     private DatabaseAdapter dbAdapter;
+    private Cycle cycle;
 
     private String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
             "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃"};
@@ -76,6 +83,7 @@ public class DayFormActivity extends AppCompatActivity {
 
         setUpViews();
         setUpActionBar();
+        getCycle();
         setUpDate();
         setUpTemperaturePicker();
         setUpCervixDrawing();
@@ -123,15 +131,6 @@ public class DayFormActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
-                            boolean withDate = false;
-                            if (bundle != null) {
-                                withDate = bundle.getBoolean("setDate");
-                            }
-                            if (withDate) {
-                                openDayForm(navigationView);
-                            }
-                        }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openList(navigationView);
                         }
@@ -151,6 +150,14 @@ public class DayFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void getCycle() {
+        bundle = getIntent().getExtras();
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
+        cycle = dbAdapter.getCycle(bundle.getLong("cycleId"));
+        dbAdapter.close();
+    }
+
     private void setUpDate() {
         bundle = getIntent().getExtras();
         boolean setDate = false;
@@ -167,7 +174,7 @@ public class DayFormActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
-                DateTime dateTime = new DateTime(year, monthOfYear, dayOfMonth, 0, 0);
+                DateTime dateTime = new DateTime(year, monthOfYear +1 , dayOfMonth, 0, 0);
                 datePicker.setText(appDateFormat.print(dateTime));
             }
 
@@ -178,7 +185,7 @@ public class DayFormActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 new DatePickerDialog(DayFormActivity.this, date, DateTime.now().getYear(),
-                        DateTime.now().getMonthOfYear(),
+                        DateTime.now().getMonthOfYear() - 1,
                         DateTime.now().getDayOfMonth()).show();
             }
         });
@@ -197,22 +204,22 @@ public class DayFormActivity extends AppCompatActivity {
         cervixView = (ImageView) findViewById(R.id.cervixCanvas);
         cervixPaint.setColor(Color.BLACK);
         cervixPaint.setStyle(Paint.Style.STROKE);
-        cervixPaint.setStrokeWidth(12);
-        cervixBitmap = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888);
+        cervixPaint.setStrokeWidth(25);
+        cervixBitmap = Bitmap.createBitmap(320, 320, Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         cervixCanvas = new Canvas(cervixBitmap);
-        circleRadius = 8;
-        circleY = 115;
+        circleRadius = 15;
+        circleY = 230;
 
-        cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
+        cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
 
         seekBarDilation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleRadius = 8 + 3 * i;
+                circleRadius = 15 + 5 * i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
+                cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
             }
 
             @Override
@@ -227,9 +234,9 @@ public class DayFormActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                circleY = 115 - 6 * i;
+                circleY = 230 - 12 * i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                cervixCanvas.drawCircle(80, circleY, circleRadius, cervixPaint);
+                cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
             }
 
             @Override
@@ -284,7 +291,7 @@ public class DayFormActivity extends AppCompatActivity {
 
             Day newDay = new Day();
             newDay.setCreateDate(appDateFormat.parseDateTime(datePicker.getText().toString()));
-            //newDay.setDayOfCycle();
+            newDay.setDayOfCycle(Days.daysBetween(cycle.getStartDate(), appDateFormat.parseDateTime(datePicker.getText().toString())).getDays() + 1);
             newDay.setTemperature(getTemperature());
             newDay.setBleeding(BleedingType.fromString(getStringFromRadioGroup(bleedingGroup)));
             newDay.setMucus(getMucusTypes());
@@ -295,10 +302,16 @@ public class DayFormActivity extends AppCompatActivity {
             newDay.setTensionInTheBreasts(getBooleanFromRadioGroup(tensionGroup));
             newDay.setOtherSymptoms(otherSymptoms.getText().toString());
             newDay.setIntercourse(getBooleanFromRadioGroup(intercourseGroup));
-            //newDay.setCycleId();
+            newDay.setCycleId(cycle.getCycleId());
 
-            //dbAdapter.insertDay(newDay);
+            dbAdapter.insertDay(newDay);
             dbAdapter.close();
+
+            try {
+                writeToSD();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return  true;
         }
     }
@@ -318,11 +331,7 @@ public class DayFormActivity extends AppCompatActivity {
 
     private Boolean getBooleanFromRadioGroup(RadioGroup radioGroup) {
         String answer = getStringFromRadioGroup(radioGroup);
-        if (answer != null && answer.equalsIgnoreCase("tak")) {
-            return true;
-        } else {
-            return false;
-        }
+        return answer != null && answer.equalsIgnoreCase("tak");
     }
 
     private List<MucusType> getMucusTypes() {
@@ -335,6 +344,23 @@ public class DayFormActivity extends AppCompatActivity {
             }
         }
         return mucusTypeList;
+    }
+
+    private void writeToSD() throws IOException {
+        ActivityCompat.requestPermissions(DayFormActivity.this, new String[]{WRITE_EXTERNAL_STORAGE},1);
+
+        File sd = Environment.getExternalStorageDirectory();
+        String backupDBPath = "menstrualcyclebackup.db";
+        File currentDB = new File(this.getDatabasePath("menstrualcycle.db").toString());
+        File backupDB = new File(sd, backupDBPath);
+
+        if (currentDB.exists()) {
+            FileChannel src = new FileInputStream(currentDB).getChannel();
+            FileChannel dst = new FileOutputStream(backupDB).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        }
     }
 
 }

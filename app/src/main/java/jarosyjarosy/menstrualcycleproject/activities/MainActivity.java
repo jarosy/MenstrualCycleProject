@@ -2,19 +2,26 @@ package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.models.*;
@@ -36,8 +43,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private Button newDayButton;
-    private Button newCycleButton;
+    private PopupWindow popupWindow;
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -73,9 +79,6 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
-                            openDayForm(navigationView);
-                        }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openList(navigationView);
                         }
@@ -103,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, DayFormActivity.class);
         Bundle b = new Bundle();
         b.putBoolean("setDate", setDate);
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
+        b.putLong("cycleId", dbAdapter.getLatestCycle().getCycleId());
+        dbAdapter.close();
         intent.putExtras(b);
         startActivity(intent);
     }
@@ -119,9 +126,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void openPopUp(View view) {
         setDatabaseStub(view);
-        Intent intent = new Intent(MainActivity.this, Pop.class);
-        startActivity(intent);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        View popupView = inflater.inflate(R.layout.popup,null);
+        popupWindow = new PopupWindow(popupView, DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent)));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAtLocation(drawerLayout, Gravity.CENTER,0,0);
     }
+    public void onNoClick(View view) {
+        popupWindow.dismiss();
+
+    }
+    public void onYesClick(View view) {
+        popupWindow.dismiss();
+        openList(view);
+    }
+
 
     public void setDatabaseStub(View view) {
         this.deleteDatabase("menstrualcycle.db");
@@ -252,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
                     // functionality that depends on this permission.
                     Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
-                return;
             }
 
             // other 'case' lines to check for other

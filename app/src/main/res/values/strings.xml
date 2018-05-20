@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Mój Cykl</string>
     <string name="add_day_manually">Dodaj dzień</string>
+    <string name="add_cycle_manually">Dodaj cykl</string>
     <string name="show_cycles">Moje cykle</string>
     <string name="settings">Ustawienia</string>
     <string name="new_day">Nowy dzień</string>
@@ -19,7 +20,7 @@
     <string name="temperature_hint">36.60</string>
     <string name="mucus_hint">Rozciągliwy</string>
     <string name="mucus_wet">Mokro / Ślisko</string>
-    <string name="mucus_stretchy">Rozciąglwy</string>
+    <string name="mucus_stretchy">Rozciągliwy</string>
     <string name="mucus_transparent">Przejrzysty</string>
     <string name="mucus_humid">Wilgotno</string>
     <string name="mucus_sticky">Lepki / Gęsty</string>

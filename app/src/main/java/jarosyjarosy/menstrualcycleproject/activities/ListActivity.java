@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.ExpandableListAdapter;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
@@ -85,9 +86,6 @@ public class ListActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Dodaj dzień")) {
-                            openDayForm(navigationView);
-                        }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             //openList(navigationView);
                         }
@@ -159,6 +157,11 @@ public class ListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void addCycleManually(View view) {
+        Toast.makeText(this, "Dodawanie cykli w produkcji",
+                Toast.LENGTH_LONG).show();
+    }
+
     private void writeToSD() throws IOException {
         File sd = Environment.getExternalStorageDirectory();
         String backupDBPath = "menstrualcyclebackup.db";
@@ -173,6 +176,5 @@ public class ListActivity extends AppCompatActivity {
             dst.close();
         }
     }
-
 
 }

@@ -118,12 +118,14 @@ public class DatabaseAdapter {
         newDayValues.put(DAY_KEY_CREATE_DATE, newDay.getCreateDate().toString());
         newDayValues.put(DAY_KEY_DAY_OF_CYCLE, newDay.getDayOfCycle());
         newDayValues.put(DAY_KEY_TEMPERATURE, newDay.getTemperature());
-        newDayValues.put(DAY_KEY_BLEEDING, newDay.getBleeding().name());
+        newDayValues.put(DAY_KEY_BLEEDING, (newDay.getBleeding() != null) ? newDay.getBleeding().name() : "");
 
         List<MucusType> typeList = newDay.getMucus();
         ArrayList<String> list = new ArrayList<String>();
         for (MucusType type : typeList) {
-            list.add(type.name());
+            if(type != null) {
+                list.add(type.name());
+            }
         }
         StringBuilder sb = new StringBuilder();
         for(String s : list) {
@@ -134,7 +136,7 @@ public class DatabaseAdapter {
         newDayValues.put(DAY_KEY_MUCUS, sb.toString());
         newDayValues.put(DAY_KEY_DILATION_OF_CERVIX, newDay.getDilationOfCervix());
         newDayValues.put(DAY_KEY_POSITION_OF_CERVIX, newDay.getPositionOfCervix());
-        newDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, newDay.getHardnessOfCervix().name());
+        newDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, (newDay.getHardnessOfCervix() != null) ? newDay.getHardnessOfCervix().name() : "");
         newDayValues.put(DAY_KEY_OVULATORY_PAIN, newDay.getOvulatoryPain());
         newDayValues.put(DAY_KEY_TENSION_IN_BREASTS, newDay.getTensionInTheBreasts());
         newDayValues.put(DAY_KEY_OTHER_SYMPTOMS, newDay.getOtherSymptoms());
@@ -163,7 +165,9 @@ public class DatabaseAdapter {
         List<MucusType> typeList = day.getMucus();
         ArrayList<String> list = new ArrayList<String>();
         for (MucusType type : typeList) {
-            list.add(type.name());
+            if(type != null) {
+                list.add(type.name());
+            }
         }
         StringBuilder sb = new StringBuilder();
         for(String s : list) {
@@ -224,6 +228,23 @@ public class DatabaseAdapter {
         return cycle;
     }
 
+    public Cycle getLatestCycle() {
+        String[] columns = {CYCLE_KEY_ID, CYCLE_KEY_START_DATE, CYCLE_KEY_END_DATE, CYCLE_KEY_PEAK_OF_MUCUS, CYCLE_KEY_PEAK_OF_CERVIX};
+        String orderBy = CYCLE_KEY_START_DATE + " desc" ;
+        Cursor cursor = db.query("cycles", columns, null, null, null, null, orderBy);
+        Cycle cycle = new Cycle();
+        if (cursor != null && cursor.moveToFirst()) {
+            cycle.setCycleId(cursor.getLong(0));
+            cycle.setStartDate(DateTime.parse(cursor.getString(1)));
+            if(cursor.getString(2) != null) {
+                cycle.setEndDate(DateTime.parse(cursor.getString(2)));
+            }
+            cycle.setPeakOfMucus(cursor.getInt(3));
+            cycle.setPeakOfCervix(cursor.getInt(4));
+        }
+        return cycle;
+    }
+
     public Day getDay(long id) {
         String[] columns = {DAY_KEY_CREATE_DATE, DAY_KEY_DAY_OF_CYCLE, DAY_KEY_TEMPERATURE, DAY_KEY_BLEEDING, DAY_KEY_MUCUS,
                 DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX, DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
@@ -240,12 +261,16 @@ public class DatabaseAdapter {
             String[] mucusString = cursor.getString(4).split(",");
             List<MucusType> mucusList= new ArrayList<>();
             for (String type : mucusString) {
-                mucusList.add(MucusType.valueOf(type));
+                if(!type.isEmpty()){
+                    mucusList.add(MucusType.valueOf(type));
+                }
             }
             day.setMucus(mucusList);
             day.setDilationOfCervix(cursor.getInt(5));
             day.setPositionOfCervix(cursor.getInt(6));
-            day.setHardnessOfCervix(CervixHardnessType.valueOf(cursor.getString(7)));
+            if(!cursor.getString(7).isEmpty()) {
+                day.setHardnessOfCervix(CervixHardnessType.valueOf(cursor.getString(7)));
+            }
             day.setOvulatoryPain(cursor.getInt(8) > 0);
             day.setTensionInTheBreasts(cursor.getInt(9) > 0);
             day.setOtherSymptoms(cursor.getString(10));
