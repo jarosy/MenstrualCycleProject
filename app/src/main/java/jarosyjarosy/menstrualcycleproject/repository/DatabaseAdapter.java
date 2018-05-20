@@ -194,7 +194,7 @@ public class DatabaseAdapter {
 
     public Cursor getAllCycles() {
         String[] columns = {CYCLE_KEY_ID, CYCLE_KEY_START_DATE, CYCLE_KEY_END_DATE, CYCLE_KEY_PEAK_OF_MUCUS, CYCLE_KEY_PEAK_OF_CERVIX};
-        String orderBy = CYCLE_KEY_START_DATE + " asc";
+        String orderBy = CYCLE_KEY_START_DATE + " desc";
         return db.query("cycles", columns, null, null, null, null, orderBy);
     }
 

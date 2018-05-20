@@ -14,24 +14,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.models.BleedingType;
+import jarosyjarosy.menstrualcycleproject.models.CervixHardnessType;
+import jarosyjarosy.menstrualcycleproject.models.Day;
+import jarosyjarosy.menstrualcycleproject.models.MucusType;
+import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+
+import static jarosyjarosy.menstrualcycleproject.R.id.radioGroupBleeding;
+import static jarosyjarosy.menstrualcycleproject.R.id.sticky_checkbox;
 
 public class DayFormActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private ActionBar actionbar;
     private DrawerLayout drawerLayout;
     private Bundle bundle;
     private EditText datePicker;
     private NumberPicker temperaturePicker;
+    private RadioGroup bleedingGroup;
+    private CheckBox wetCheckbox;
+    private CheckBox stretchyCheckbox;
+    private CheckBox transparentCheckbox;
+    private CheckBox humidCheckbox;
+    private CheckBox stickyCheckbox;
+    private CheckBox muzzyCheckbox;
+    private CheckBox dryCheckbox;
+    private CheckBox anomalousCheckbox;
     private SeekBar seekBarPosition;
     private SeekBar seekBarDilation;
+    private RadioGroup hardnessGroup;
+    private RadioGroup painGroup;
+    private RadioGroup tensionGroup;
+    private EditText otherSymptoms;
+    private RadioGroup intercourseGroup;
 
-    DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+    private DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
     private Canvas cervixCanvas;
     private Paint cervixPaint = new Paint();
@@ -40,12 +63,18 @@ public class DayFormActivity extends AppCompatActivity {
     private float circleY;
     private float circleRadius;
 
+    private DatabaseAdapter dbAdapter;
+
+    private String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
+            "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dayform);
 
+        setUpViews();
         setUpActionBar();
         setUpDate();
         setUpTemperaturePicker();
@@ -53,10 +82,31 @@ public class DayFormActivity extends AppCompatActivity {
 
     }
 
+    public void setUpViews() {
+        datePicker = (EditText) findViewById(R.id.dateEdit);
+        temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
+        bleedingGroup = (RadioGroup) findViewById(R.id.radioGroupBleeding);
+        wetCheckbox = (CheckBox) findViewById(R.id.wet_checkbox);
+        stretchyCheckbox = (CheckBox) findViewById(R.id.stretchy_checkbox);
+        transparentCheckbox = (CheckBox) findViewById(R.id.transparent_checkbox);
+        humidCheckbox = (CheckBox) findViewById(R.id.humid_checkbox);
+        stickyCheckbox = (CheckBox) findViewById(R.id.sticky_checkbox);
+        muzzyCheckbox = (CheckBox) findViewById(R.id.muzzy_checkbox);
+        dryCheckbox = (CheckBox) findViewById(R.id.dry_checkbox);
+        anomalousCheckbox = (CheckBox) findViewById(R.id.anomalous_checkbox);
+        seekBarPosition = (SeekBar) findViewById(R.id.seekPosition);
+        seekBarDilation = (SeekBar) findViewById(R.id.seekDilation);
+        hardnessGroup = (RadioGroup) findViewById(R.id.radioGroupHardness);
+        painGroup = (RadioGroup) findViewById(R.id.radioGroupOvulatoryPain);
+        tensionGroup = (RadioGroup) findViewById(R.id.radioGroupBreastTension);
+        otherSymptoms = (EditText) findViewById(R.id.other);
+        intercourseGroup = (RadioGroup) findViewById(R.id.radioIntercourse);
+    }
+
     public void setUpActionBar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionbar = getSupportActionBar();
+        ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
@@ -85,9 +135,6 @@ public class DayFormActivity extends AppCompatActivity {
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openList(navigationView);
                         }
-                        if (menuItem.getTitle().toString().matches("Tabelka")) {
-                            openTable(navigationView);
-                        }
 
                         return true;
                     }
@@ -110,8 +157,6 @@ public class DayFormActivity extends AppCompatActivity {
         if (bundle != null) {
             setDate = bundle.getBoolean("setDate");
         }
-
-        datePicker = (EditText) findViewById(R.id.dateEdit);
         if (setDate) {
             datePicker.setText(appDateFormat.print(new DateTime()));
             datePicker.setEnabled(false);
@@ -122,8 +167,8 @@ public class DayFormActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
-                DateTime setDate = new DateTime(year, monthOfYear, dayOfMonth, 0, 0);
-                datePicker.setText(setDate.toString());
+                DateTime dateTime = new DateTime(year, monthOfYear, dayOfMonth, 0, 0);
+                datePicker.setText(appDateFormat.print(dateTime));
             }
 
         };
@@ -140,9 +185,6 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     private void setUpTemperaturePicker() {
-        temperaturePicker = (NumberPicker) findViewById(R.id.temperaturePicker);
-        String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
-                "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃", "37,35℃", "37,40℃"};
         temperaturePicker.setMaxValue(temps.length - 1);
         temperaturePicker.setMinValue(0);
         temperaturePicker.setWrapSelectorWheel(false);
@@ -152,8 +194,6 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     public void setUpCervixDrawing() {
-        seekBarDilation = (SeekBar) findViewById(R.id.seekDilation);
-        seekBarPosition = (SeekBar) findViewById(R.id.seekPosition);
         cervixView = (ImageView) findViewById(R.id.cervixCanvas);
         cervixPaint.setColor(Color.BLACK);
         cervixPaint.setStyle(Paint.Style.STROKE);
@@ -222,6 +262,79 @@ public class DayFormActivity extends AppCompatActivity {
     private void openList(View view) {
         Intent intent = new Intent(DayFormActivity.this, ListActivity.class);
         startActivity(intent);
+    }
+
+    public void onSaveButtonClick(View view) {
+        if(saveDay()) {
+            Toast.makeText(this, "Nowy dzień zapisany!",
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(DayFormActivity.this, ListActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private Boolean saveDay() {
+        if (datePicker.getText().toString().equals("")) {
+            Toast.makeText(this, "Uzupełnij brakujące dane!",
+                    Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            dbAdapter = new DatabaseAdapter(this);
+            dbAdapter.open();
+
+            Day newDay = new Day();
+            newDay.setCreateDate(appDateFormat.parseDateTime(datePicker.getText().toString()));
+            //newDay.setDayOfCycle();
+            newDay.setTemperature(getTemperature());
+            newDay.setBleeding(BleedingType.fromString(getStringFromRadioGroup(bleedingGroup)));
+            newDay.setMucus(getMucusTypes());
+            newDay.setDilationOfCervix(seekBarDilation.getProgress());
+            newDay.setPositionOfCervix(seekBarPosition.getProgress());
+            newDay.setHardnessOfCervix(CervixHardnessType.fromString(getStringFromRadioGroup(hardnessGroup)));
+            newDay.setOvulatoryPain(getBooleanFromRadioGroup(painGroup));
+            newDay.setTensionInTheBreasts(getBooleanFromRadioGroup(tensionGroup));
+            newDay.setOtherSymptoms(otherSymptoms.getText().toString());
+            newDay.setIntercourse(getBooleanFromRadioGroup(intercourseGroup));
+            //newDay.setCycleId();
+
+            //dbAdapter.insertDay(newDay);
+            dbAdapter.close();
+            return  true;
+        }
+    }
+
+    private Float getTemperature() {
+        String stringTemp = temps[temperaturePicker.getValue()];
+        return Float.valueOf(stringTemp.replace("℃", "").replace(",", "."));
+    }
+
+    private String getStringFromRadioGroup(RadioGroup radioGroup) {
+        RadioButton radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+        if(radioButton != null){
+            return radioButton.getText().toString();
+        }
+        return null;
+    }
+
+    private Boolean getBooleanFromRadioGroup(RadioGroup radioGroup) {
+        String answer = getStringFromRadioGroup(radioGroup);
+        if (answer != null && answer.equalsIgnoreCase("tak")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private List<MucusType> getMucusTypes() {
+        List<CheckBox> checkboxList = Arrays.asList(wetCheckbox, stretchyCheckbox, transparentCheckbox, humidCheckbox,
+                stickyCheckbox, muzzyCheckbox, dryCheckbox, anomalousCheckbox);
+        List<MucusType> mucusTypeList = new ArrayList<>();
+        for (CheckBox checkbox : checkboxList) {
+            if (checkbox.isChecked()) {
+                mucusTypeList.add(MucusType.fromString(checkbox.getText().toString()));
+            }
+        }
+        return mucusTypeList;
     }
 
 }

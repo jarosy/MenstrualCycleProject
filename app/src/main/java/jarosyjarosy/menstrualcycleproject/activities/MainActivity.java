@@ -3,6 +3,7 @@ package jarosyjarosy.menstrualcycleproject.activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -35,10 +36,10 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-    private ActionBar actionbar;
     private Button newDayButton;
     private Button newCycleButton;
+
+    private boolean doubleBackToExitPressedOnce = false;
 
     DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
@@ -53,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setUpActionbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionbar = getSupportActionBar();
+        ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
@@ -77,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             openList(navigationView);
-                        }
-                        if (menuItem.getTitle().toString().matches("Tabelka")) {
-                            openTable(navigationView);
                         }
 
                         return true;
@@ -119,28 +117,34 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openPopUp(View view) {
+        setDatabaseStub(view);
+        Intent intent = new Intent(MainActivity.this, Pop.class);
+        startActivity(intent);
+    }
+
     public void setDatabaseStub(View view) {
         this.deleteDatabase("menstrualcycle.db");
 
         Cycle cycle1 = new Cycle();
-        cycle1.setStartDate(DateTime.parse("2018-01-01"));
-        cycle1.setEndDate(DateTime.parse("2018-01-02"));
+        cycle1.setStartDate(DateTime.parse("2018-01-21"));
+        cycle1.setEndDate(DateTime.parse("2018-01-22"));
 
         Cycle cycle2 = new Cycle();
-        cycle2.setStartDate(DateTime.parse("2018-01-03"));
-        cycle2.setEndDate(DateTime.parse("2018-01-04"));
+        cycle2.setStartDate(DateTime.parse("2018-01-23"));
+        cycle2.setEndDate(DateTime.parse("2018-01-24"));
 
         Cycle cycle3 = new Cycle();
-        cycle3.setStartDate(DateTime.parse("2018-01-05"));
+        cycle3.setStartDate(DateTime.parse("2018-01-25"));
 
         Day day1 = new Day();
-        day1.setCreateDate(DateTime.parse("2018-01-01"));
+        day1.setCreateDate(DateTime.parse("2018-01-21"));
         day1.setDayOfCycle(1);
-        day1.setTemperature(36.60F);
+        day1.setTemperature(36.00F);
         day1.setBleeding(BleedingType.BLEEDING_NO);
         day1.setMucus(Arrays.asList(MucusType.HUMID, MucusType.STRETCHY));
-        day1.setDilationOfCervix(4);
-        day1.setPositionOfCervix(3);
+        day1.setDilationOfCervix(10);
+        day1.setPositionOfCervix(10);
         day1.setHardnessOfCervix(CervixHardnessType.HARD);
         day1.setOvulatoryPain(false);
         day1.setTensionInTheBreasts(false);
@@ -149,13 +153,13 @@ public class MainActivity extends AppCompatActivity {
         day1.setCycleId(1L);
 
         Day day2 = new Day();
-        day2.setCreateDate(DateTime.parse("2018-01-02"));
+        day2.setCreateDate(DateTime.parse("2018-01-22"));
         day2.setDayOfCycle(2);
-        day2.setTemperature(36.65F);
-        day2.setBleeding(BleedingType.BLEEDING_NO);
+        day2.setTemperature(36.45F);
+        day2.setBleeding(BleedingType.BLEEDING_YES);
         day2.setMucus(Collections.singletonList(MucusType.WET));
-        day2.setDilationOfCervix(4);
-        day2.setPositionOfCervix(3);
+        day2.setDilationOfCervix(1);
+        day2.setPositionOfCervix(1);
         day2.setHardnessOfCervix(CervixHardnessType.SOFT);
         day2.setOvulatoryPain(false);
         day2.setTensionInTheBreasts(false);
@@ -164,12 +168,12 @@ public class MainActivity extends AppCompatActivity {
         day2.setCycleId(1L);
 
         Day day3 = new Day();
-        day3.setCreateDate(DateTime.parse("2018-01-03"));
+        day3.setCreateDate(DateTime.parse("2018-01-23"));
         day3.setDayOfCycle(1);
-        day3.setTemperature(36.80F);
+        day3.setTemperature(37.30F);
         day3.setBleeding(BleedingType.BLEEDING_YES);
         day3.setMucus(Collections.singletonList(MucusType.MUZZY));
-        day3.setDilationOfCervix(1);
+        day3.setDilationOfCervix(10);
         day3.setPositionOfCervix(1);
         day3.setHardnessOfCervix(CervixHardnessType.HARD);
         day3.setOvulatoryPain(true);
@@ -179,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
         day3.setCycleId(2L);
 
         Day day4 = new Day();
-        day4.setCreateDate(DateTime.parse("2018-01-04"));
+        day4.setCreateDate(DateTime.parse("2018-01-24"));
         day4.setDayOfCycle(2);
         day4.setTemperature(36.50F);
         day4.setBleeding(BleedingType.BLEEDING_SPOTTING);
         day4.setMucus(Collections.singletonList(MucusType.DRY));
-        day4.setDilationOfCervix(6);
-        day4.setPositionOfCervix(8);
+        day4.setDilationOfCervix(1);
+        day4.setPositionOfCervix(10);
         day4.setHardnessOfCervix(CervixHardnessType.SOFT);
         day4.setOvulatoryPain(true);
         day4.setTensionInTheBreasts(false);
@@ -194,10 +198,10 @@ public class MainActivity extends AppCompatActivity {
         day4.setCycleId(2L);
 
         Day day5 = new Day();
-        day5.setCreateDate(DateTime.parse("2018-01-05"));
+        day5.setCreateDate(DateTime.parse("2018-01-25"));
         day5.setDayOfCycle(1);
-        day5.setTemperature(36.40F);
-        day5.setBleeding(BleedingType.BLEEDING_NO);
+        day5.setTemperature(36.70F);
+        day5.setBleeding(BleedingType.BLEEDING_SPOTTING);
         day5.setMucus(Arrays.asList(MucusType.STRETCHY, MucusType.WET, MucusType.TRANSPARENT));
         day5.setDilationOfCervix(5);
         day5.setPositionOfCervix(5);
@@ -271,6 +275,25 @@ public class MainActivity extends AppCompatActivity {
             src.close();
             dst.close();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Wciśnij WSTECZ ponownie, aby wyjść.", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
 }

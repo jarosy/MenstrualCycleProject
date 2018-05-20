@@ -34,8 +34,6 @@ import java.util.List;
 public class ListActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-    private ActionBar actionbar;
 
     DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
@@ -43,10 +41,10 @@ public class ListActivity extends AppCompatActivity {
     private Cursor cycleCursor;
     private Cursor dayCursor;
 
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<Cycle> listDataHeader;
+    private HashMap<Cycle, List<Day>> listDataChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +66,9 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void setUpActionbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionbar = getSupportActionBar();
+        ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
@@ -93,9 +91,6 @@ public class ListActivity extends AppCompatActivity {
                         if (menuItem.getTitle().toString().matches("Moje cykle")) {
                             //openList(navigationView);
                         }
-                        if (menuItem.getTitle().toString().matches("Tabelka")) {
-                            openTable(navigationView);
-                        }
 
                         return true;
                     }
@@ -113,8 +108,8 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+        listDataHeader = new ArrayList<Cycle>();
+        listDataChild = new HashMap<Cycle, List<Day>>();
 
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
@@ -125,27 +120,20 @@ public class ListActivity extends AppCompatActivity {
         if(cycleCursor != null && cycleCursor.moveToFirst()) {
             do {
                 Cycle cycle = dbAdapter.getCycle(cycleCursor.getLong(0));
-//                cycle.setCycleId(cycleCursor.getLong(0));
-//                cycle.setStartDate(DateTime.parse(cycleCursor.getString(1)));
-//                if (cycleCursor.getString(2) != null) {
-//                    cycle.setEndDate(DateTime.parse(cycleCursor.getString(2)));
-//                }
-//                cycle.setPeakOfMucus(cycleCursor.getInt(3));
-//                cycle.setPeakOfCervix(cycleCursor.getInt(4));
                 cycleList.add(cycle);
             } while (cycleCursor.moveToNext());
         }
+        listDataHeader = cycleList;
         int cycleCounter = 0;
         for (Cycle cycle : cycleList) {
-            listDataHeader.add(appDateFormat.print(cycle.getStartDate()) + " - " +  ((cycle.getEndDate() != null ) ? appDateFormat.print(cycle.getEndDate()) : "obecnie"));
-            List<String> dayStringList = new ArrayList<>();
+            List<Day> dayList = new ArrayList<>();
             dayCursor = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
             dayCursor.moveToFirst();
             do {
                 Day day = dbAdapter.getDay(dayCursor.getLong(0));
-                dayStringList.add(day.getDayOfCycle() + " dzień | " + day.getTemperature() + "℃");
+                dayList.add(day);
             } while (dayCursor.moveToNext());
-            listDataChild.put(listDataHeader.get(cycleCounter),dayStringList);
+            listDataChild.put(listDataHeader.get(cycleCounter),dayList);
             cycleCounter++;
         }
     }

@@ -1,7 +1,7 @@
 package jarosyjarosy.menstrualcycleproject.models;
 
 public enum BleedingType {
-    BLEEDING_NO("X"),
+    BLEEDING_NO(" "),
     BLEEDING_YES("K"),
     BLEEDING_SPOTTING("P");
 

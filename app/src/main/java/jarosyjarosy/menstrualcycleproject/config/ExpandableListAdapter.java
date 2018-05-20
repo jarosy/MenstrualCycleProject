@@ -4,23 +4,36 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 import jarosyjarosy.menstrualcycleproject.R;
+import jarosyjarosy.menstrualcycleproject.activities.ListActivity;
+import jarosyjarosy.menstrualcycleproject.activities.MainActivity;
+import jarosyjarosy.menstrualcycleproject.activities.TableActivity;
+import jarosyjarosy.menstrualcycleproject.models.Cycle;
+import jarosyjarosy.menstrualcycleproject.models.Day;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
-    private List<String> _listDataHeader; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+    private DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
+
+    private List<Cycle> _listDataHeader; // header titles
+    // child data in format of header title, child title
+    private HashMap<Cycle, List<Day>> _listDataChild;
+
+    public ExpandableListAdapter(Context context, List<Cycle> listDataHeader,
+                                 HashMap<Cycle, List<Day>> listChildData) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
@@ -41,7 +54,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final Day day = (Day) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
@@ -52,7 +65,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.listDay);
 
-        txtListChild.setText(childText);
+        txtListChild.setText(day.getDayOfCycle() + " dzień | " + day.getTemperature() + "℃");
         return convertView;
     }
 
@@ -79,8 +92,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
+                             View convertView, final ViewGroup parent) {
+        final Cycle cycle = (Cycle) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -90,7 +103,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.listCycle);
         lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        lblListHeader.setText(appDateFormat.print(cycle.getStartDate()) + " - " +  ((cycle.getEndDate() != null ) ? appDateFormat.print(cycle.getEndDate()) : "obecnie"));
+
+        Button previewBtn = (Button)convertView.findViewById(R.id.previewButton);
+        previewBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(parent.getContext(), TableActivity.class);
+                Bundle b = new Bundle();
+                b.putLong("cycleId", cycle.getCycleId());
+                intent.putExtras(b);
+                parent.getContext().startActivity(intent);
+            }
+        });
 
         return convertView;
     }
