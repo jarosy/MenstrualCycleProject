@@ -17,14 +17,14 @@
                 android:textStyle="normal|bold|italic"
                 android:onClick="onYesClick"
                 android:layout_marginEnd="35dp"
-                android:layout_below="@+id/textView7" android:layout_alignEnd="@+id/textView7"/>
+                android:layout_below="@+id/popupText" android:layout_alignEnd="@+id/popupText"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Czy na pewno chcesz rozpocząć nowy cykl?"
-            android:id="@+id/textView7"
+            android:id="@+id/popupText"
+            android:text="@string/popup_new_cycle_text"
             android:layout_gravity="center_horizontal"
             android:layout_margin="10dp"
             android:textAlignment="center"
@@ -41,8 +41,8 @@
                 android:id="@+id/buttonNo"
                 android:onClick="onNoClick"
                 android:textStyle="normal|bold|italic"
-                android:layout_marginStart="35dp" android:layout_below="@+id/textView7"
-                android:layout_alignStart="@+id/textView7"/>
+                android:layout_marginStart="35dp" android:layout_below="@+id/popupText"
+                android:layout_alignStart="@+id/popupText"/>
 
     </RelativeLayout>
 

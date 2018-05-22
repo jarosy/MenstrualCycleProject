@@ -86,7 +86,7 @@ public class ListActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                        if (menuItem.getTitle().toString().matches(getString(R.string.show_cycles))) {
                             //openList(navigationView);
                         }
 
@@ -112,25 +112,11 @@ public class ListActivity extends AppCompatActivity {
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
 
-        List<Cycle> cycleList = new ArrayList<>();
-        cycleCursor = dbAdapter.getAllCycles();
-        cycleCursor.moveToFirst();
-        if(cycleCursor != null && cycleCursor.moveToFirst()) {
-            do {
-                Cycle cycle = dbAdapter.getCycle(cycleCursor.getLong(0));
-                cycleList.add(cycle);
-            } while (cycleCursor.moveToNext());
-        }
+        List<Cycle> cycleList = dbAdapter.getAllCycles();
         listDataHeader = cycleList;
         int cycleCounter = 0;
         for (Cycle cycle : cycleList) {
-            List<Day> dayList = new ArrayList<>();
-            dayCursor = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
-            dayCursor.moveToFirst();
-            do {
-                Day day = dbAdapter.getDay(dayCursor.getLong(0));
-                dayList.add(day);
-            } while (dayCursor.moveToNext());
+            List<Day> dayList = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
             listDataChild.put(listDataHeader.get(cycleCounter),dayList);
             cycleCounter++;
         }

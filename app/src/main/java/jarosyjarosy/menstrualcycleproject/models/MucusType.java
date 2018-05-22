@@ -6,10 +6,10 @@ public enum MucusType {
     TRANSPARENT("Przejrzysty"),
     HUMID("Wilgotno"),
     STICKY("Lepki / Gęsty"),
-    MUZZY(" Mętny"),
+    MUZZY("Mętny"),
     DRY("Sucho"),
     ANOMALOUS("Nietypowy");
-    
+
     private final String text;
 
     MucusType(final String text) {

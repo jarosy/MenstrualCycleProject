@@ -131,7 +131,7 @@ public class DayFormActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                        if (menuItem.getTitle().toString().matches(getString(R.string.show_cycles))) {
                             openList(navigationView);
                         }
 

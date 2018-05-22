@@ -19,10 +19,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.Toast;
+import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.models.*;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                        if (menuItem.getTitle().toString().matches(getString(R.string.show_cycles))) {
                             openList(navigationView);
                         }
 
@@ -125,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openPopUp(View view) {
-        setDatabaseStub(view);
+        //setDatabaseStub(view);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         View popupView = inflater.inflate(R.layout.popup,null);
@@ -136,11 +133,27 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onNoClick(View view) {
         popupWindow.dismiss();
+        setDatabaseStub(view);
 
     }
     public void onYesClick(View view) {
         popupWindow.dismiss();
+        addNewCycle();
         openList(view);
+    }
+
+    public void addNewCycle() {
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
+
+        Cycle cycleToEnd =  dbAdapter.getLatestCycle();
+        cycleToEnd.setEndDate(DateTime.now().minusDays(1));
+        Cycle cycleToStart = new Cycle();
+        cycleToStart.setStartDate(DateTime.now());
+
+        dbAdapter.updateCycle(cycleToEnd);
+        dbAdapter.insertCycle(cycleToStart);
+        dbAdapter.close();
     }
 
 

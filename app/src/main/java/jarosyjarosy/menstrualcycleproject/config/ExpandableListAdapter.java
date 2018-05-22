@@ -2,6 +2,7 @@ package jarosyjarosy.menstrualcycleproject.config;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import jarosyjarosy.menstrualcycleproject.activities.MainActivity;
 import jarosyjarosy.menstrualcycleproject.activities.TableActivity;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
 import jarosyjarosy.menstrualcycleproject.models.Day;
+import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -53,7 +55,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+                             boolean isLastChild, View convertView, final ViewGroup parent) {
 
         final Day day = (Day) getChild(groupPosition, childPosition);
 
@@ -67,6 +69,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.listDay);
 
         txtListChild.setText(day.getDayOfCycle() + " dzień | " + day.getTemperature() + "℃");
+
+        Button deleteDayBtn = (Button)convertView.findViewById(R.id.deleteDayButton);
+        deleteDayBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                DatabaseAdapter dbAdapter = new DatabaseAdapter(parent.getContext());
+                dbAdapter.open();
+                dbAdapter.deleteDay(day.getDayId());
+                dbAdapter.close();
+                _listDataChild.remove(childPosition);
+                notifyDataSetChanged();
+            }
+        });
+
         return convertView;
     }
 

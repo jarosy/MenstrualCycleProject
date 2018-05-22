@@ -22,7 +22,7 @@
                 android:layout_weight="1" />
 
         <Button
-                android:id="@+id/editCycleButton"
+                android:id="@+id/editDayButton"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
                 android:textSize="5pt"
                 android:text="@string/edit"/>
         <Button
-                android:id="@+id/deleteCycleButton"
+                android:id="@+id/deleteDayButton"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:layout_width="wrap_content"

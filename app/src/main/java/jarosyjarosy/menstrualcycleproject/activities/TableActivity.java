@@ -33,6 +33,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 public class TableActivity extends AppCompatActivity {
 
@@ -78,7 +79,7 @@ public class TableActivity extends AppCompatActivity {
                         drawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        if (menuItem.getTitle().toString().matches("Moje cykle")) {
+                        if (menuItem.getTitle().toString().matches(getString(R.string.show_cycles))) {
                             openList(navigationView);
                         }
 
@@ -305,24 +306,38 @@ public class TableActivity extends AppCompatActivity {
         dbAdapter.open();
 
         cycle = dbAdapter.getCycle(bundle.getLong("cycleId"));
-        dayList = new ArrayList<>();
-        dayCursor = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
-        dayCursor.moveToFirst();
-        do {
-            Day day = dbAdapter.getDay(dayCursor.getLong(0));
-            dayList.add(day);
-        } while (dayCursor.moveToNext());
+        dayList = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
         dbAdapter.close();
     }
 
     public void setUpTableColumns() {
+        ListIterator iterator = dayList.listIterator();
         for (Day day : dayList) {
+
+            GridLayout table = (GridLayout) findViewById(R.id.table);
+            table.setColumnCount(day.getDayOfCycle() + 4);
+
+            if(iterator.hasPrevious()) {
+                for (int col = dayList.get(iterator.previousIndex()).getDayOfCycle() + 4; col <= day.getDayOfCycle() + 3; col++) {
+                    for (int row = 0; row < table.getRowCount(); row++) {
+                        TextView blankView = new TextView(this);
+                        blankView.setWidth(dpToPx(20));
+                        addTextViewToTable(blankView, " ", col, 1, row, 1);
+                        if(row == 40) {
+                            blankView.setHeight(dpToPx(40));
+                        }
+                        if(row == 44) {
+                            blankView.setHeight(dpToPx(100));
+                        }
+                    }
+                }
+            }
+
             TextView dayOfMonth = new TextView(this);
             dayOfMonth.setWidth(dpToPx(20));
             addTextViewToTable(dayOfMonth, dayOfMonthFormat.print(day.getCreateDate()), day.getDayOfCycle() + 3, 1, 0, 1);
 
             setTemperature(day);
-
 
             TextView dayOfCycle = new TextView(this);
             dayOfCycle.setWidth(dpToPx(20));
@@ -353,14 +368,14 @@ public class TableActivity extends AppCompatActivity {
             TextView ovulatoryPain = new TextView(this);
             ovulatoryPain.setWidth(dpToPx(20));
             addTextViewToTable(ovulatoryPain, " ", day.getDayOfCycle() + 3, 1, 42, 1);
-            if(day.getOvulatoryPain()) {
+            if (day.getOvulatoryPain()) {
                 ovulatoryPain.setBackgroundColor(Color.BLACK);
             }
 
             TextView breastTension = new TextView(this);
             breastTension.setWidth(dpToPx(20));
             addTextViewToTable(breastTension, " ", day.getDayOfCycle() + 3, 1, 43, 1);
-            if(day.getTensionInTheBreasts()) {
+            if (day.getTensionInTheBreasts()) {
                 breastTension.setBackgroundColor(Color.BLACK);
             }
             //tymczasowe
@@ -377,8 +392,11 @@ public class TableActivity extends AppCompatActivity {
             TextView intercourse = new TextView(this);
             intercourse.setWidth(dpToPx(20));
             addTextViewToTable(intercourse, " ", day.getDayOfCycle() + 3, 1, 46, 1);
-            if(day.getIntercourse()) {
+            if (day.getIntercourse()) {
                 intercourse.setBackgroundColor(Color.BLACK);
+            }
+            if(iterator.hasNext()) {
+                iterator.next();
             }
         }
     }
@@ -414,6 +432,7 @@ public class TableActivity extends AppCompatActivity {
             i++;
         }
     }
+
     public void setCervix(Day day) {
         ImageView cervixView = new ImageView(this);
         Paint cervixPaint = new Paint();

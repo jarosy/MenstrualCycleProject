@@ -10,8 +10,8 @@ import android.util.Log;
 import jarosyjarosy.menstrualcycleproject.models.*;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DatabaseAdapter {
 
@@ -196,19 +196,53 @@ public class DatabaseAdapter {
         return db.delete("cycle", where, null) > 0;
     }
 
-    public Cursor getAllCycles() {
+    public List<Cycle> getAllCycles() {
+        List<Cycle> cycleList = new ArrayList<>();
         String[] columns = {CYCLE_KEY_ID, CYCLE_KEY_START_DATE, CYCLE_KEY_END_DATE, CYCLE_KEY_PEAK_OF_MUCUS, CYCLE_KEY_PEAK_OF_CERVIX};
         String orderBy = CYCLE_KEY_START_DATE + " desc";
-        return db.query("cycles", columns, null, null, null, null, orderBy);
+        Cursor cycleCursor = db.query("cycles", columns, null, null, null, null, orderBy);
+        cycleCursor.moveToFirst();
+        if(cycleCursor.moveToFirst()) {
+            do {
+                Cycle cycle = getCycle(cycleCursor.getLong(0));
+                cycleList.add(cycle);
+            } while (cycleCursor.moveToNext());
+        }
+        return cycleList;
     }
 
-    public Cursor getAllDaysFromCycle(long cycleId) {
+    public  List<Day> getAllDaysFromCycle(long cycleId) {
+        List<Day> dayList = new ArrayList<>();
         String[] columns = {DAY_KEY_ID, DAY_KEY_CREATE_DATE, DAY_KEY_DAY_OF_CYCLE, DAY_KEY_TEMPERATURE, DAY_KEY_BLEEDING, DAY_KEY_MUCUS,
                 DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX, DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
                 DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE};
         String where = CYCLE_KEY_ID + "=" + cycleId;
         String orderBy = DAY_KEY_DAY_OF_CYCLE + " asc";
-        return db.query("days", columns, where, null, null, null, orderBy);
+        Cursor dayCursor = db.query("days", columns, where, null, null, null, orderBy);
+        if(dayCursor.getCount() == 0) {
+            return Collections.emptyList();
+        }
+        dayCursor.moveToFirst();
+        do {
+            Day day = getDay(dayCursor.getLong(0));
+            dayList.add(day);
+        } while (dayCursor.moveToNext());
+        return dayList;
+    }
+
+    public  List<Day> getAllDays() {
+        List<Day> dayList = new ArrayList<>();
+        String[] columns = {DAY_KEY_ID, DAY_KEY_CREATE_DATE, DAY_KEY_DAY_OF_CYCLE, DAY_KEY_TEMPERATURE, DAY_KEY_BLEEDING, DAY_KEY_MUCUS,
+                DAY_KEY_DILATION_OF_CERVIX, DAY_KEY_POSITION_OF_CERVIX, DAY_KEY_HARDNESS_OF_CERVIX, DAY_KEY_OVULATORY_PAIN, DAY_KEY_TENSION_IN_BREASTS,
+                DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE};
+        String orderBy = DAY_KEY_CREATE_DATE + " desc";
+        Cursor dayCursor = db.query("days", columns, null, null, null, null, orderBy);
+        dayCursor.moveToFirst();
+        do {
+            Day day = getDay(dayCursor.getLong(0));
+            dayList.add(day);
+        } while (dayCursor.moveToNext());
+        return dayList;
     }
 
     public Cycle getCycle(long id) {

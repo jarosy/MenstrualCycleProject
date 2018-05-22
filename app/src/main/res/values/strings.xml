@@ -39,4 +39,6 @@
     <string name="edit">Edytuj</string>
     <string name="delete">Usuń</string>
     <string name="preview">Podgląd</string>
+    <string name="popup_new_cycle_text">Czy na pewno chcesz rozpocząć nowy cykl?</string>
+    <string name="add_cycle_date">Data rozpoczęcia cyklu:</string>
 </resources>
