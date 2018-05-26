@@ -23,6 +23,7 @@ import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.models.*;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
+import jarosyjarosy.menstrualcycleproject.validators.CycleValidator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private PopupWindow popupWindow;
+
+    private CycleValidator validator = new CycleValidator();
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -122,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openPopUp(View view) {
-        //setDatabaseStub(view);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         View popupView = inflater.inflate(R.layout.popup,null);
@@ -146,13 +148,13 @@ public class MainActivity extends AppCompatActivity {
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
 
-        Cycle cycleToEnd =  dbAdapter.getLatestCycle();
-        cycleToEnd.setEndDate(DateTime.now().minusDays(1));
         Cycle cycleToStart = new Cycle();
         cycleToStart.setStartDate(DateTime.now());
-
-        dbAdapter.updateCycle(cycleToEnd);
-        dbAdapter.insertCycle(cycleToStart);
+        if(validator.validateCycle(this, cycleToStart)) {
+            dbAdapter.insertCycle(cycleToStart);
+        } else {
+            Toast.makeText(this, "Cykl był wcześniej dodany!", Toast.LENGTH_LONG).show();
+        }
         dbAdapter.close();
     }
 
@@ -162,11 +164,9 @@ public class MainActivity extends AppCompatActivity {
 
         Cycle cycle1 = new Cycle();
         cycle1.setStartDate(DateTime.parse("2018-01-21"));
-        cycle1.setEndDate(DateTime.parse("2018-01-22"));
 
         Cycle cycle2 = new Cycle();
         cycle2.setStartDate(DateTime.parse("2018-01-23"));
-        cycle2.setEndDate(DateTime.parse("2018-01-24"));
 
         Cycle cycle3 = new Cycle();
         cycle3.setStartDate(DateTime.parse("2018-01-25"));
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
+            finishAffinity();
             return;
         }
 

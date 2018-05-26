@@ -18,6 +18,7 @@ import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.models.*;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
+import jarosyjarosy.menstrualcycleproject.validators.DayValidator;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
@@ -71,6 +72,8 @@ public class DayFormActivity extends AppCompatActivity {
 
     private DatabaseAdapter dbAdapter;
     private Cycle cycle;
+
+    private DayValidator validator = new DayValidator();
 
     private String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
             "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃"};
@@ -273,8 +276,7 @@ public class DayFormActivity extends AppCompatActivity {
 
     public void onSaveButtonClick(View view) {
         if(saveDay()) {
-            Toast.makeText(this, "Nowy dzień zapisany!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Nowy dzień zapisany!", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(DayFormActivity.this, ListActivity.class);
             startActivity(intent);
         }
@@ -282,8 +284,7 @@ public class DayFormActivity extends AppCompatActivity {
 
     private Boolean saveDay() {
         if (datePicker.getText().toString().equals("")) {
-            Toast.makeText(this, "Uzupełnij brakujące dane!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Uzupełnij brakujące dane!", Toast.LENGTH_LONG).show();
             return false;
         } else {
             dbAdapter = new DatabaseAdapter(this);
@@ -304,15 +305,20 @@ public class DayFormActivity extends AppCompatActivity {
             newDay.setIntercourse(getBooleanFromRadioGroup(intercourseGroup));
             newDay.setCycleId(cycle.getCycleId());
 
-            dbAdapter.insertDay(newDay);
-            dbAdapter.close();
 
-            try {
-                writeToSD();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(validator.validateDay(this, newDay, cycle)) {
+                dbAdapter.insertDay(newDay);
+                dbAdapter.close();
+                try {
+                    writeToSD();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            } else {
+                dbAdapter.close();
+                return false;
             }
-            return  true;
         }
     }
 

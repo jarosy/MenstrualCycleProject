@@ -492,5 +492,10 @@ public class TableActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+       openList(new View(this));
+    }
+
 
 }

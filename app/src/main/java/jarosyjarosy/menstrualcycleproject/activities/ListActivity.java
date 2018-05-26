@@ -1,24 +1,29 @@
 package jarosyjarosy.menstrualcycleproject.activities;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.Toast;
+import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.ExpandableListAdapter;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
 import jarosyjarosy.menstrualcycleproject.models.Day;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
+import jarosyjarosy.menstrualcycleproject.validators.CycleValidator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -31,6 +36,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -39,13 +45,15 @@ public class ListActivity extends AppCompatActivity {
     DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
     private DatabaseAdapter dbAdapter;
-    private Cursor cycleCursor;
-    private Cursor dayCursor;
 
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
+    private EditText cycleDatePicker;
+    private PopupWindow cycleEdit;
     private List<Cycle> listDataHeader;
     private HashMap<Cycle, List<Day>> listDataChild;
+
+    private CycleValidator validator = new CycleValidator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +114,8 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<Cycle>();
-        listDataChild = new HashMap<Cycle, List<Day>>();
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
 
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
@@ -117,8 +125,54 @@ public class ListActivity extends AppCompatActivity {
         int cycleCounter = 0;
         for (Cycle cycle : cycleList) {
             List<Day> dayList = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
-            listDataChild.put(listDataHeader.get(cycleCounter),dayList);
+            listDataChild.put(listDataHeader.get(cycleCounter), dayList);
             cycleCounter++;
+        }
+    }
+
+    public void openCycleForm(View view) {
+        LayoutInflater inflater = (android.view.LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.cycle_edit, null);
+        cycleEdit = new PopupWindow(popupView, DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
+        cycleEdit.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent)));
+        cycleEdit.setOutsideTouchable(true);
+        cycleEdit.showAtLocation(drawerLayout, Gravity.CENTER, 0, 0);
+        cycleDatePicker = (EditText) popupView.findViewById(R.id.cycledatePicker);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                DateTime dateTime = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                cycleDatePicker.setText(appDateFormat.print(dateTime));
+            }
+
+        };
+        cycleDatePicker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ListActivity.this, date, DateTime.now().getYear(),
+                        DateTime.now().getMonthOfYear() - 1,
+                        DateTime.now().getDayOfMonth()).show();
+            }
+        });
+    }
+
+    public void onCycleSave(View view) {
+        Cycle newCycle = new Cycle();
+        newCycle.setStartDate(appDateFormat.parseDateTime(cycleDatePicker.getText().toString()));
+        if (validator.validateCycle(this, newCycle)) {
+            dbAdapter = new DatabaseAdapter(this);
+            dbAdapter.open();
+            dbAdapter.insertCycle(newCycle);
+            dbAdapter.close();
+            cycleEdit.dismiss();
+            refreshActivity();
+        } else {
+            Toast.makeText(this, "Cykl w tym okresie już istnieje!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -138,14 +192,10 @@ public class ListActivity extends AppCompatActivity {
         Intent intent = new Intent(ListActivity.this, TableActivity.class);
         startActivity(intent);
     }
+
     private void openList(View view) {
         Intent intent = new Intent(ListActivity.this, ListActivity.class);
         startActivity(intent);
-    }
-
-    public void addCycleManually(View view) {
-        Toast.makeText(this, "Dodawanie cykli w produkcji",
-                Toast.LENGTH_LONG).show();
     }
 
     private void writeToSD() throws IOException {
@@ -161,6 +211,17 @@ public class ListActivity extends AppCompatActivity {
             src.close();
             dst.close();
         }
+    }
+
+    public void refreshActivity() {
+        finish();
+        startActivity(getIntent());
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(ListActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
 }

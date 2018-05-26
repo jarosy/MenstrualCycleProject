@@ -80,7 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 dbAdapter.deleteDay(day.getDayId());
                 dbAdapter.close();
                 _listDataChild.remove(childPosition);
-                notifyDataSetChanged();
+                ((ListActivity)_context).refreshActivity();
             }
         });
 
@@ -121,7 +121,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.listCycle);
         lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(appDateFormat.print(cycle.getStartDate()) + " - " +  ((cycle.getEndDate() != null ) ? appDateFormat.print(cycle.getEndDate()) : "obecnie"));
+        lblListHeader.setText("Start: " + appDateFormat.print(cycle.getStartDate()));
 
         Button previewBtn = (Button)convertView.findViewById(R.id.previewButton);
         previewBtn.setOnClickListener(new View.OnClickListener() {
