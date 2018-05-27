@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onNoClick(View view) {
         popupWindow.dismiss();
-        setDatabaseStub(view);
 
     }
     public void onYesClick(View view) {
@@ -158,115 +157,6 @@ public class MainActivity extends AppCompatActivity {
         dbAdapter.close();
     }
 
-
-    public void setDatabaseStub(View view) {
-        this.deleteDatabase("menstrualcycle.db");
-
-        Cycle cycle1 = new Cycle();
-        cycle1.setStartDate(DateTime.parse("2018-01-21"));
-
-        Cycle cycle2 = new Cycle();
-        cycle2.setStartDate(DateTime.parse("2018-01-23"));
-
-        Cycle cycle3 = new Cycle();
-        cycle3.setStartDate(DateTime.parse("2018-01-25"));
-
-        Day day1 = new Day();
-        day1.setCreateDate(DateTime.parse("2018-01-21"));
-        day1.setDayOfCycle(1);
-        day1.setTemperature(36.00F);
-        day1.setBleeding(BleedingType.BLEEDING_NO);
-        day1.setMucus(Arrays.asList(MucusType.HUMID, MucusType.STRETCHY));
-        day1.setDilationOfCervix(10);
-        day1.setPositionOfCervix(10);
-        day1.setHardnessOfCervix(CervixHardnessType.HARD);
-        day1.setOvulatoryPain(false);
-        day1.setTensionInTheBreasts(false);
-        day1.setOtherSymptoms("Zakłócenia");
-        day1.setIntercourse(false);
-        day1.setCycleId(1L);
-
-        Day day2 = new Day();
-        day2.setCreateDate(DateTime.parse("2018-01-22"));
-        day2.setDayOfCycle(2);
-        day2.setTemperature(36.45F);
-        day2.setBleeding(BleedingType.BLEEDING_YES);
-        day2.setMucus(Collections.singletonList(MucusType.WET));
-        day2.setDilationOfCervix(1);
-        day2.setPositionOfCervix(1);
-        day2.setHardnessOfCervix(CervixHardnessType.SOFT);
-        day2.setOvulatoryPain(false);
-        day2.setTensionInTheBreasts(false);
-        day2.setOtherSymptoms(null);
-        day2.setIntercourse(false);
-        day2.setCycleId(1L);
-
-        Day day3 = new Day();
-        day3.setCreateDate(DateTime.parse("2018-01-23"));
-        day3.setDayOfCycle(1);
-        day3.setTemperature(37.30F);
-        day3.setBleeding(BleedingType.BLEEDING_YES);
-        day3.setMucus(Collections.singletonList(MucusType.MUZZY));
-        day3.setDilationOfCervix(10);
-        day3.setPositionOfCervix(1);
-        day3.setHardnessOfCervix(CervixHardnessType.HARD);
-        day3.setOvulatoryPain(true);
-        day3.setTensionInTheBreasts(true);
-        day3.setOtherSymptoms(null);
-        day3.setIntercourse(false);
-        day3.setCycleId(2L);
-
-        Day day4 = new Day();
-        day4.setCreateDate(DateTime.parse("2018-01-24"));
-        day4.setDayOfCycle(2);
-        day4.setTemperature(36.50F);
-        day4.setBleeding(BleedingType.BLEEDING_SPOTTING);
-        day4.setMucus(Collections.singletonList(MucusType.DRY));
-        day4.setDilationOfCervix(1);
-        day4.setPositionOfCervix(10);
-        day4.setHardnessOfCervix(CervixHardnessType.SOFT);
-        day4.setOvulatoryPain(true);
-        day4.setTensionInTheBreasts(false);
-        day4.setOtherSymptoms(null);
-        day4.setIntercourse(false);
-        day4.setCycleId(2L);
-
-        Day day5 = new Day();
-        day5.setCreateDate(DateTime.parse("2018-01-25"));
-        day5.setDayOfCycle(1);
-        day5.setTemperature(36.70F);
-        day5.setBleeding(BleedingType.BLEEDING_SPOTTING);
-        day5.setMucus(Arrays.asList(MucusType.STRETCHY, MucusType.WET, MucusType.TRANSPARENT));
-        day5.setDilationOfCervix(5);
-        day5.setPositionOfCervix(5);
-        day5.setHardnessOfCervix(CervixHardnessType.SOFT);
-        day5.setOvulatoryPain(false);
-        day5.setTensionInTheBreasts(false);
-        day5.setOtherSymptoms("Zakłócenia");
-        day5.setIntercourse(true);
-        day5.setCycleId(3L);
-
-        dbAdapter = new DatabaseAdapter(this);
-        dbAdapter.open();
-
-        dbAdapter.insertCycle(cycle1);
-        dbAdapter.insertCycle(cycle2);
-        dbAdapter.insertCycle(cycle3);
-
-        dbAdapter.insertDay(day1);
-        dbAdapter.insertDay(day2);
-        dbAdapter.insertDay(day3);
-        dbAdapter.insertDay(day4);
-        dbAdapter.insertDay(day5);
-
-        dbAdapter.close();
-
-        try {
-            writeToSD();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

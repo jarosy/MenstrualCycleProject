@@ -29,12 +29,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static jarosyjarosy.menstrualcycleproject.R.id.radioBleedNo;
 import static jarosyjarosy.menstrualcycleproject.R.id.radioGroupBleeding;
 import static jarosyjarosy.menstrualcycleproject.R.id.sticky_checkbox;
 
@@ -61,6 +59,18 @@ public class DayFormActivity extends AppCompatActivity {
     private EditText otherSymptoms;
     private RadioGroup intercourseGroup;
 
+    private RadioButton radioBleedYes;
+    private RadioButton radioBleedNo;
+    private RadioButton radioBleedSpot;
+    private RadioButton radioHard;
+    private RadioButton radioSoft;
+    private RadioButton radioPainYes;
+    private RadioButton radioPainNo;
+    private RadioButton radioTensionYes;
+    private RadioButton radioTensionNo;
+    private RadioButton radioIntercourseYes;
+    private RadioButton radioIntecourseNo;
+
     private DateTimeFormatter appDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy");
 
     private Canvas cervixCanvas;
@@ -72,11 +82,15 @@ public class DayFormActivity extends AppCompatActivity {
 
     private DatabaseAdapter dbAdapter;
     private Cycle cycle;
+    private Day day;
 
     private DayValidator validator = new DayValidator();
 
-    private String temps[] = {"36,00℃", "36,05℃", "36,10℃", "36,15℃", "36,20℃", "36,25℃", "36,30℃", "36,35℃", "36,40℃", "36,45℃", "36,50℃", "36,55℃", "36,60℃", "36,65℃",
-            "36,70℃", "36,75℃", "36,80℃", "36,85℃", "36,90℃", "36,95℃", "37,00℃", "37,05℃", "37,10℃", "37,15℃", "37,20℃", "37,25℃", "37,30℃"};
+    private List<String> temps = Arrays.asList("36.00℃", "36.05℃", "36.10℃", "36.15℃", "36.20℃", "36.25℃", "36.30℃", "36.35℃", "36.40℃", "36.45℃", "36.50℃", "36.55℃", "36.60℃", "36.65℃",
+            "36.70℃", "36.75℃", "36.80℃", "36.85℃", "36.90℃", "36.95℃", "37.00℃", "37.05℃", "37.10℃", "37.15℃", "37.20℃", "37.25℃", "37.30℃");
+
+    private List<Float> tempsLong = Arrays.asList(36.00F, 36.05F, 36.10F, 36.15F, 36.20F, 36.25F, 36.30F, 36.35F, 36.40F, 36.45F, 36.50F, 36.55F, 36.60F, 36.65F,
+            36.70F, 36.75F, 36.80F, 36.85F, 36.90F, 36.95F, 37.00F, 37.05F, 37.10F, 37.15F, 37.20F, 37.25F, 37.30F);
 
 
     @Override
@@ -84,9 +98,9 @@ public class DayFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dayform);
 
+        getCycleAndDay();
         setUpViews();
         setUpActionBar();
-        getCycle();
         setUpDate();
         setUpTemperaturePicker();
         setUpCervixDrawing();
@@ -112,6 +126,53 @@ public class DayFormActivity extends AppCompatActivity {
         tensionGroup = (RadioGroup) findViewById(R.id.radioGroupBreastTension);
         otherSymptoms = (EditText) findViewById(R.id.other);
         intercourseGroup = (RadioGroup) findViewById(R.id.radioIntercourse);
+
+        radioBleedNo = (RadioButton) findViewById(R.id.radioBleedNo);
+        radioBleedYes = (RadioButton) findViewById(R.id.radioBleedYes);
+        radioBleedSpot = (RadioButton) findViewById(R.id.radioSpotting);
+        radioHard = (RadioButton) findViewById(R.id.radioHard);
+        radioSoft = (RadioButton) findViewById(R.id.radioSoft);
+        radioPainNo = (RadioButton) findViewById(R.id.radioPainNo);
+        radioPainYes = (RadioButton) findViewById(R.id.radioPainYes);
+        radioTensionNo = (RadioButton) findViewById(R.id.radioBreastNo);
+        radioTensionYes = (RadioButton) findViewById(R.id.radioBreastYes);
+        radioIntecourseNo = (RadioButton) findViewById(R.id.radioIntercourseNo);
+        radioIntercourseYes = (RadioButton) findViewById(R.id.radioIntercourseYes);
+
+        if (bundle.getLong("dayId") > 0) {
+            //poustawiac viewsy na odpowiedznie do dnia
+            List<MucusType> mucusList = day.getMucus();
+            if (mucusList.contains(MucusType.WET)) wetCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.STRETCHY)) stretchyCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.TRANSPARENT)) transparentCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.HUMID)) humidCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.STICKY)) stickyCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.MUZZY)) muzzyCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.DRY)) dryCheckbox.setChecked(true);
+            if (mucusList.contains(MucusType.ANOMALOUS)) anomalousCheckbox.setChecked(true);
+
+            if (day.getHardnessOfCervix().toString().equals("T")) radioHard.setChecked(true);
+            if (day.getHardnessOfCervix().toString().equals("M")) radioSoft.setChecked(true);
+            if (day.getBleeding().toString().equals(" ")) radioBleedNo.setChecked(true);
+            if (day.getBleeding().toString().equals("K")) radioBleedYes.setChecked(true);
+            if (day.getBleeding().toString().equals("P")) radioBleedSpot.setChecked(true);
+            if (day.getOvulatoryPain()) {
+                radioPainYes.setChecked(true);
+            } else {
+                radioPainNo.setChecked(true);
+            }
+            if (day.getTensionInTheBreasts()) {
+                radioTensionYes.setChecked(true);
+            } else {
+                radioTensionNo.setChecked(true);
+            }
+            if (day.getIntercourse()) {
+                radioIntercourseYes.setChecked(true);
+            } else {
+                radioIntecourseNo.setChecked(true);
+            }
+            otherSymptoms.setText(day.getOtherSymptoms());
+        }
     }
 
     public void setUpActionBar() {
@@ -153,11 +214,14 @@ public class DayFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getCycle() {
+    private void getCycleAndDay() {
         bundle = getIntent().getExtras();
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
         cycle = dbAdapter.getCycle(bundle.getLong("cycleId"));
+        if (bundle.getLong("dayId") > 0) {
+            day = dbAdapter.getDay(bundle.getLong("dayId"));
+        }
         dbAdapter.close();
     }
 
@@ -171,13 +235,17 @@ public class DayFormActivity extends AppCompatActivity {
             datePicker.setText(appDateFormat.print(new DateTime()));
             datePicker.setEnabled(false);
         }
+        if (bundle.getLong("dayId") > 0) {
+            datePicker.setText(appDateFormat.print(day.getCreateDate()));
+            datePicker.setEnabled(false);
+        }
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
-                DateTime dateTime = new DateTime(year, monthOfYear +1 , dayOfMonth, 0, 0);
+                DateTime dateTime = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
                 datePicker.setText(appDateFormat.print(dateTime));
             }
 
@@ -195,12 +263,17 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     private void setUpTemperaturePicker() {
-        temperaturePicker.setMaxValue(temps.length - 1);
+        temperaturePicker.setMaxValue(temps.size() - 1);
         temperaturePicker.setMinValue(0);
         temperaturePicker.setWrapSelectorWheel(false);
-        temperaturePicker.setDisplayedValues(temps);
+        temperaturePicker.setDisplayedValues((String[]) temps.toArray());
         temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         temperaturePicker.setValue(12);
+
+        if (bundle.getLong("dayId") > 0) {
+            int index = tempsLong.indexOf(day.getTemperature());
+            temperaturePicker.setValue(index);
+        }
     }
 
     public void setUpCervixDrawing() {
@@ -213,6 +286,12 @@ public class DayFormActivity extends AppCompatActivity {
         cervixCanvas = new Canvas(cervixBitmap);
         circleRadius = 15;
         circleY = 230;
+        if (bundle.getLong("dayId") > 0) {
+            circleRadius = 15 + day.getDilationOfCervix() * 5;
+            circleY = 230 - day.getPositionOfCervix() * 12;
+            seekBarDilation.setProgress(day.getDilationOfCervix());
+            seekBarPosition.setProgress(day.getPositionOfCervix());
+        }
 
         cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
 
@@ -275,7 +354,7 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     public void onSaveButtonClick(View view) {
-        if(saveDay()) {
+        if (saveDay()) {
             Toast.makeText(this, "Nowy dzień zapisany!", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(DayFormActivity.this, ListActivity.class);
             startActivity(intent);
@@ -292,7 +371,7 @@ public class DayFormActivity extends AppCompatActivity {
 
             Day newDay = new Day();
             newDay.setCreateDate(appDateFormat.parseDateTime(datePicker.getText().toString()));
-            newDay.setDayOfCycle(Days.daysBetween(cycle.getStartDate(), appDateFormat.parseDateTime(datePicker.getText().toString())).getDays() + 1);
+            newDay.setDayOfCycle(Days.daysBetween(cycle.getStartDate().minusDays(1), appDateFormat.parseDateTime(datePicker.getText().toString())).getDays());
             newDay.setTemperature(getTemperature());
             newDay.setBleeding(BleedingType.fromString(getStringFromRadioGroup(bleedingGroup)));
             newDay.setMucus(getMucusTypes());
@@ -305,9 +384,9 @@ public class DayFormActivity extends AppCompatActivity {
             newDay.setIntercourse(getBooleanFromRadioGroup(intercourseGroup));
             newDay.setCycleId(cycle.getCycleId());
 
-
-            if(validator.validateDay(this, newDay, cycle)) {
-                dbAdapter.insertDay(newDay);
+            if (day != null) {
+                newDay.setDayId(day.getDayId());
+                dbAdapter.updateDay(newDay);
                 dbAdapter.close();
                 try {
                     writeToSD();
@@ -316,20 +395,31 @@ public class DayFormActivity extends AppCompatActivity {
                 }
                 return true;
             } else {
-                dbAdapter.close();
-                return false;
+                if (validator.validateDay(this, newDay, cycle)) {
+                    dbAdapter.insertDay(newDay);
+                    dbAdapter.close();
+                    try {
+                        writeToSD();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                } else {
+                    dbAdapter.close();
+                    return false;
+                }
             }
         }
     }
 
     private Float getTemperature() {
-        String stringTemp = temps[temperaturePicker.getValue()];
+        String stringTemp = temps.get(temperaturePicker.getValue());
         return Float.valueOf(stringTemp.replace("℃", "").replace(",", "."));
     }
 
     private String getStringFromRadioGroup(RadioGroup radioGroup) {
         RadioButton radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
-        if(radioButton != null){
+        if (radioButton != null) {
             return radioButton.getText().toString();
         }
         return null;
@@ -353,7 +443,7 @@ public class DayFormActivity extends AppCompatActivity {
     }
 
     private void writeToSD() throws IOException {
-        ActivityCompat.requestPermissions(DayFormActivity.this, new String[]{WRITE_EXTERNAL_STORAGE},1);
+        ActivityCompat.requestPermissions(DayFormActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, 1);
 
         File sd = Environment.getExternalStorageDirectory();
         String backupDBPath = "menstrualcyclebackup.db";

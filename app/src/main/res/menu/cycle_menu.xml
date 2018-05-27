@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content">
     <item android:id="@+id/previewItem"
           android:title="@string/preview"/>
     <item android:id="@+id/newDayItem"
-          android:title="@string/preview"/>
+          android:title="@string/new_day"/>
     <item android:id="@+id/deleteItem"
-          android:icon="@drawable/ic_help"
           android:title="@string/delete"/>
-</ListView>
+</menu>

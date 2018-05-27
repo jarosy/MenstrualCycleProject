@@ -477,21 +477,6 @@ public class TableActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void writeToSD() throws IOException {
-        File sd = Environment.getExternalStorageDirectory();
-        String backupDBPath = "menstrualcyclebackup.db";
-        File currentDB = new File(this.getDatabasePath("menstrualcycle.db").toString());
-        File backupDB = new File(sd, backupDBPath);
-
-        if (currentDB.exists()) {
-            FileChannel src = new FileInputStream(currentDB).getChannel();
-            FileChannel dst = new FileOutputStream(backupDB).getChannel();
-            dst.transferFrom(src, 0, src.size());
-            src.close();
-            dst.close();
-        }
-    }
-
     @Override
     public void onBackPressed() {
        openList(new View(this));

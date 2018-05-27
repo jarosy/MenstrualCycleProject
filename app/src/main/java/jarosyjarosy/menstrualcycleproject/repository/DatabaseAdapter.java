@@ -171,7 +171,7 @@ public class DatabaseAdapter {
         updatedDayValues.put(DAY_KEY_MUCUS, sb.toString());
         updatedDayValues.put(DAY_KEY_DILATION_OF_CERVIX, day.getDilationOfCervix());
         updatedDayValues.put(DAY_KEY_POSITION_OF_CERVIX, day.getPositionOfCervix());
-        updatedDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, day.getHardnessOfCervix().name());
+        updatedDayValues.put(DAY_KEY_HARDNESS_OF_CERVIX, (day.getHardnessOfCervix() != null) ? day.getHardnessOfCervix().name() : "");
         updatedDayValues.put(DAY_KEY_OVULATORY_PAIN, day.getOvulatoryPain());
         updatedDayValues.put(DAY_KEY_TENSION_IN_BREASTS, day.getTensionInTheBreasts());
         updatedDayValues.put(DAY_KEY_OTHER_SYMPTOMS, day.getOtherSymptoms());
@@ -186,7 +186,8 @@ public class DatabaseAdapter {
 
     public boolean deleteCycle(long id) {
         String where = CYCLE_KEY_ID + "=" + id;
-        return db.delete("cycle", where, null) > 0;
+        db.delete("days", where, null );
+        return db.delete("cycles", where, null) > 0;
     }
 
     public List<Cycle> getAllCycles() {
@@ -230,6 +231,9 @@ public class DatabaseAdapter {
                 DAY_KEY_OTHER_SYMPTOMS, DAY_KEY_INTERCOURSE};
         String orderBy = DAY_KEY_CREATE_DATE + " desc";
         Cursor dayCursor = db.query("days", columns, null, null, null, null, orderBy);
+        if(dayCursor.getCount() == 0) {
+            return Collections.emptyList();
+        }
         dayCursor.moveToFirst();
         do {
             Day day = getDay(dayCursor.getLong(0));
