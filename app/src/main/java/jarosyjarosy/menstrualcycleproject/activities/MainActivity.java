@@ -1,5 +1,6 @@
 package jarosyjarosy.menstrualcycleproject.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +43,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private PopupWindow popupWindow;
 
     private CycleValidator validator = new CycleValidator();
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         setUpActionbar();
     }
 
-    public void setUpActionbar() {
+    private void setUpActionbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -99,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openDayForm(View view) {
+        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter.open();
+        if (!(dbAdapter.getAllCycles().size() > 0)) {
+            Toast.makeText(this, "Brak cykli. Dodaj cykl zanim dodasz dzień.", Toast.LENGTH_LONG).show();
+            return;
+        }
         Boolean setDate = false;
         if (view.getTag() != null) {
             setDate = Boolean.valueOf(view.getTag().toString());
@@ -106,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, DayFormActivity.class);
         Bundle b = new Bundle();
         b.putBoolean("setDate", setDate);
-        dbAdapter = new DatabaseAdapter(this);
-        dbAdapter.open();
         b.putLong("cycleId", dbAdapter.getLatestCycle().getCycleId());
         dbAdapter.close();
         intent.putExtras(b);
@@ -124,37 +129,42 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openPopUp(View view) {
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        View popupView = inflater.inflate(R.layout.popup,null);
-        popupWindow = new PopupWindow(popupView, DrawerLayout.LayoutParams.WRAP_CONTENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent)));
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.showAtLocation(drawerLayout, Gravity.CENTER,0,0);
+    public void openAlertDialog(final View view) {
+        AlertDialog.Builder cycleAlertBuild = new AlertDialog.Builder(MainActivity.this);
+        cycleAlertBuild.setCancelable(false)
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(addNewCycle()) {
+                            openDayForm(view);
+                        }
+                    }
+                })
+                .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog alertCycle = cycleAlertBuild.create();
+        alertCycle.setTitle("Na pewno chcesz rozpocząć nowy cykl?");
+        alertCycle.show();
     }
-    public void onNoClick(View view) {
-        popupWindow.dismiss();
 
-    }
-    public void onYesClick(View view) {
-        popupWindow.dismiss();
-        addNewCycle();
-        openList(view);
-    }
-
-    public void addNewCycle() {
+    private boolean addNewCycle() {
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
 
         Cycle cycleToStart = new Cycle();
-        cycleToStart.setStartDate(DateTime.now());
-        if(validator.validateCycle(this, cycleToStart)) {
+        cycleToStart.setStartDate(DateTime.now().withTimeAtStartOfDay());
+        if (validator.validateCycle(this, cycleToStart)) {
             dbAdapter.insertCycle(cycleToStart);
         } else {
             Toast.makeText(this, "Cykl był wcześniej dodany!", Toast.LENGTH_LONG).show();
+            return false;
         }
         dbAdapter.close();
+        return true;
     }
 
 
@@ -184,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeToSD() throws IOException {
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE},1);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, 1);
 
         File sd = Environment.getExternalStorageDirectory();
         String backupDBPath = "menstrualcyclebackup.db";

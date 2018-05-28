@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -137,7 +138,7 @@ public class ListActivity extends AppCompatActivity {
         cycleEdit.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.transparent)));
         cycleEdit.setOutsideTouchable(true);
         cycleEdit.showAtLocation(drawerLayout, Gravity.CENTER, 0, 0);
-        cycleDatePicker = (EditText) popupView.findViewById(R.id.cycledatePicker);
+        cycleDatePicker = (EditText) popupView.findViewById(R.id.cycleDatePicker);
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -169,7 +170,6 @@ public class ListActivity extends AppCompatActivity {
             dbAdapter.open();
             dbAdapter.insertCycle(newCycle);
             dbAdapter.close();
-            cycleEdit.dismiss();
             refreshActivity();
         } else {
             Toast.makeText(this, "Cykl w tym okresie już istnieje!", Toast.LENGTH_LONG).show();
@@ -186,6 +186,38 @@ public class ListActivity extends AppCompatActivity {
         b.putBoolean("setDate", setDate);
         intent.putExtras(b);
         startActivity(intent);
+    }
+
+    public void openNewCycleAlertDialog(View view) {
+        AlertDialog.Builder newCycleAlertBuild = new AlertDialog.Builder(ListActivity.this);
+        View dialogView = getLayoutInflater().inflate(R.layout.cycle_edit, null);
+
+        cycleDatePicker = (EditText) dialogView.findViewById(R.id.cycleDatePicker);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                DateTime dateTime = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
+                cycleDatePicker.setText(appDateFormat.print(dateTime));
+            }
+
+        };
+        cycleDatePicker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ListActivity.this, date, DateTime.now().getYear(),
+                        DateTime.now().getMonthOfYear() - 1,
+                        DateTime.now().getDayOfMonth()).show();
+            }
+        });
+
+        newCycleAlertBuild.setView(dialogView);
+        AlertDialog newCycleDialog = newCycleAlertBuild.create();
+        newCycleDialog.show();
     }
 
     public void openTable(View view) {

@@ -41,4 +41,6 @@
     <string name="preview">Podgląd</string>
     <string name="popup_new_cycle_text">Czy na pewno chcesz rozpocząć nowy cykl?</string>
     <string name="add_cycle_date">Data rozpoczęcia cyklu:</string>
+    <string name="no_temperature">Nie badam temperatury</string>
+    <string name="no_cervix">Nie badam szyjki</string>
 </resources>

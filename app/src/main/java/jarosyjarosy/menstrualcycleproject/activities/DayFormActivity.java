@@ -59,6 +59,9 @@ public class DayFormActivity extends AppCompatActivity {
     private EditText otherSymptoms;
     private RadioGroup intercourseGroup;
 
+    private CheckBox checkNoTemperature;
+    private CheckBox checkNoCervix;
+
     private RadioButton radioBleedYes;
     private RadioButton radioBleedNo;
     private RadioButton radioBleedSpot;
@@ -127,6 +130,21 @@ public class DayFormActivity extends AppCompatActivity {
         otherSymptoms = (EditText) findViewById(R.id.other);
         intercourseGroup = (RadioGroup) findViewById(R.id.radioIntercourse);
 
+        checkNoTemperature = (CheckBox) findViewById(R.id.checkNoTemperature);
+        checkNoCervix = (CheckBox) findViewById(R.id.checkNoCervix);
+
+        checkNoTemperature.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if(checkNoTemperature.isChecked()) {
+                    temperaturePicker.setEnabled(false);
+                } else {
+                    temperaturePicker.setEnabled(true);
+                }
+            }
+        });
+
         radioBleedNo = (RadioButton) findViewById(R.id.radioBleedNo);
         radioBleedYes = (RadioButton) findViewById(R.id.radioBleedYes);
         radioBleedSpot = (RadioButton) findViewById(R.id.radioSpotting);
@@ -140,7 +158,16 @@ public class DayFormActivity extends AppCompatActivity {
         radioIntercourseYes = (RadioButton) findViewById(R.id.radioIntercourseYes);
 
         if (bundle.getLong("dayId") > 0) {
-            //poustawiac viewsy na odpowiedznie do dnia
+            if (day.getTemperature() < 36.0F) {
+                checkNoTemperature.setChecked(true);
+                temperaturePicker.setEnabled(false);
+            }
+            if (day.getDilationOfCervix() < 0 || day.getPositionOfCervix() < 0) {
+                checkNoCervix.setChecked(true);
+                seekBarDilation.setEnabled(false);
+                seekBarPosition.setEnabled(false);
+            }
+
             List<MucusType> mucusList = day.getMucus();
             if (mucusList.contains(MucusType.WET)) wetCheckbox.setChecked(true);
             if (mucusList.contains(MucusType.STRETCHY)) stretchyCheckbox.setChecked(true);
@@ -151,8 +178,10 @@ public class DayFormActivity extends AppCompatActivity {
             if (mucusList.contains(MucusType.DRY)) dryCheckbox.setChecked(true);
             if (mucusList.contains(MucusType.ANOMALOUS)) anomalousCheckbox.setChecked(true);
 
-            if (day.getHardnessOfCervix().toString().equals("T")) radioHard.setChecked(true);
-            if (day.getHardnessOfCervix().toString().equals("M")) radioSoft.setChecked(true);
+            if (day.getHardnessOfCervix() != null && day.getHardnessOfCervix().toString().equals("T"))
+                radioHard.setChecked(true);
+            if (day.getHardnessOfCervix() != null && day.getHardnessOfCervix().toString().equals("M"))
+                radioSoft.setChecked(true);
             if (day.getBleeding().toString().equals(" ")) radioBleedNo.setChecked(true);
             if (day.getBleeding().toString().equals("K")) radioBleedYes.setChecked(true);
             if (day.getBleeding().toString().equals("P")) radioBleedSpot.setChecked(true);
@@ -172,6 +201,7 @@ public class DayFormActivity extends AppCompatActivity {
                 radioIntecourseNo.setChecked(true);
             }
             otherSymptoms.setText(day.getOtherSymptoms());
+
         }
     }
 
@@ -293,7 +323,27 @@ public class DayFormActivity extends AppCompatActivity {
             seekBarPosition.setProgress(day.getPositionOfCervix());
         }
 
-        cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
+        if (checkNoCervix.isChecked()) {
+            cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        } else {
+            cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
+        }
+
+        checkNoCervix.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (checkNoCervix.isChecked()) {
+                    cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                    seekBarPosition.setEnabled(false);
+                    seekBarDilation.setEnabled(false);
+                } else {
+                    cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
+                    seekBarPosition.setEnabled(true);
+                    seekBarDilation.setEnabled(true);
+                }
+            }
+        });
 
         seekBarDilation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -372,11 +422,22 @@ public class DayFormActivity extends AppCompatActivity {
             Day newDay = new Day();
             newDay.setCreateDate(appDateFormat.parseDateTime(datePicker.getText().toString()));
             newDay.setDayOfCycle(Days.daysBetween(cycle.getStartDate().minusDays(1), appDateFormat.parseDateTime(datePicker.getText().toString())).getDays());
-            newDay.setTemperature(getTemperature());
+            if (checkNoTemperature.isChecked()) {
+                newDay.setTemperature(null);
+            } else {
+                newDay.setTemperature(getTemperature());
+            }
+
             newDay.setBleeding(BleedingType.fromString(getStringFromRadioGroup(bleedingGroup)));
             newDay.setMucus(getMucusTypes());
-            newDay.setDilationOfCervix(seekBarDilation.getProgress());
-            newDay.setPositionOfCervix(seekBarPosition.getProgress());
+            if (checkNoCervix.isChecked()) {
+                newDay.setDilationOfCervix(-1);
+                newDay.setPositionOfCervix(-1);
+            } else {
+                newDay.setDilationOfCervix(seekBarDilation.getProgress());
+                newDay.setPositionOfCervix(seekBarPosition.getProgress());
+            }
+
             newDay.setHardnessOfCervix(CervixHardnessType.fromString(getStringFromRadioGroup(hardnessGroup)));
             newDay.setOvulatoryPain(getBooleanFromRadioGroup(painGroup));
             newDay.setTensionInTheBreasts(getBooleanFromRadioGroup(tensionGroup));

@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.view.*;
 import android.widget.*;
 import jarosyjarosy.menstrualcycleproject.R;
@@ -78,16 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
             @Override
             public void onClick(View view) {
-                DatabaseAdapter dbAdapter = new DatabaseAdapter(_context);
-                dbAdapter.open();
-                dbAdapter.deleteDay(day.getDayId());
-                dbAdapter.close();
-                try {
-                    writeToSD();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ((ListActivity)_context).refreshActivity();
+                openDayDeleteAlertDialog(day);
             }
         });
 
@@ -192,23 +185,73 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
                return true;
 
             case R.id.deleteItem:
+                openCycleDeleteAlertDialog();
 
-                DatabaseAdapter dbAdapter = new DatabaseAdapter(_context);
-                dbAdapter.open();
-                dbAdapter.deleteCycle(chosenCycle.getCycleId());
-                dbAdapter.close();
-                try {
-                    writeToSD();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ((ListActivity)_context).refreshActivity();
                 return true;
 
             default:
                 break;
         }
         return false;
+    }
+
+    public void openCycleDeleteAlertDialog() {
+        AlertDialog.Builder cycleAlertBuild = new AlertDialog.Builder(_context);
+        cycleAlertBuild.setCancelable(false)
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DatabaseAdapter dbAdapter = new DatabaseAdapter(_context);
+                        dbAdapter.open();
+                        dbAdapter.deleteCycle(chosenCycle.getCycleId());
+                        dbAdapter.close();
+                        try {
+                            writeToSD();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ((ListActivity)_context).refreshActivity();
+
+                    }
+                })
+                .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog alertCycle = cycleAlertBuild.create();
+        alertCycle.setTitle("Na pewno chcesz usunąć cykl?");
+        alertCycle.show();
+    }
+
+    public void openDayDeleteAlertDialog(final Day day) {
+        AlertDialog.Builder cycleAlertBuild = new AlertDialog.Builder(_context);
+        cycleAlertBuild.setCancelable(false)
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DatabaseAdapter dbAdapter = new DatabaseAdapter(_context);
+                        dbAdapter.open();
+                        dbAdapter.deleteDay(day.getDayId());
+                        dbAdapter.close();
+                        try {
+                            writeToSD();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ((ListActivity)_context).refreshActivity();
+                    }
+                })
+                .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog alertCycle = cycleAlertBuild.create();
+        alertCycle.setTitle("Na pewno chcesz usunąć dzień?");
+        alertCycle.show();
     }
 
     private void writeToSD() throws IOException {

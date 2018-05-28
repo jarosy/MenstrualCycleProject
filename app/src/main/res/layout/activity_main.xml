@@ -22,7 +22,8 @@
                                                      android:layout_height="match_parent">
             <Button
                     android:text="@string/new_cycle"
-                    android:onClick="openPopUp"
+                    android:onClick="openAlertDialog"
+                    android:tag="true"
                     android:layout_width="wrap_content"
                     android:layout_height="55dp" android:id="@+id/new_cycle"
                     app:layout_constraintTop_toTopOf="parent"

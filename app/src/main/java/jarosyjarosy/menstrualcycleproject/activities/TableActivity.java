@@ -443,8 +443,9 @@ public class TableActivity extends AppCompatActivity {
         Bitmap cervixBitmap = Bitmap.createBitmap(80, 160, Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         Canvas cervixCanvas = new Canvas(cervixBitmap);
-        cervixCanvas.drawCircle(40, 120 - 8 * day.getPositionOfCervix(), 6 + 2 * day.getDilationOfCervix(), cervixPaint);
-
+        if(day.getPositionOfCervix() >= 0 && day.getDilationOfCervix() >= 0) {
+            cervixCanvas.drawCircle(40, 120 - 8 * day.getPositionOfCervix(), 6 + 2 * day.getDilationOfCervix(), cervixPaint);
+        }
         GridLayout table = (GridLayout) findViewById(R.id.table);
         cervixView.setBackgroundResource(R.drawable.cell_shape);
         cervixView.setMinimumHeight(dpToPx(40));
