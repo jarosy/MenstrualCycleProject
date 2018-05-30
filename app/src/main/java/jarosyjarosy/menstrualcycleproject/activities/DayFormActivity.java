@@ -89,10 +89,13 @@ public class DayFormActivity extends AppCompatActivity {
 
     private DayValidator validator = new DayValidator();
 
-    private List<String> temps = Arrays.asList("36.00℃", "36.05℃", "36.10℃", "36.15℃", "36.20℃", "36.25℃", "36.30℃", "36.35℃", "36.40℃", "36.45℃", "36.50℃", "36.55℃", "36.60℃", "36.65℃",
-            "36.70℃", "36.75℃", "36.80℃", "36.85℃", "36.90℃", "36.95℃", "37.00℃", "37.05℃", "37.10℃", "37.15℃", "37.20℃", "37.25℃", "37.30℃");
+    private List<String> temps = Arrays.asList("35.50℃", "35.55℃", "35.60℃", "35.65℃", "35.70℃", "35.75℃", "35.80℃", "35.85℃",
+            "35.90℃", "35.95℃", "36.00℃", "36.05℃", "36.10℃", "36.15℃", "36.20℃", "36.25℃", "36.30℃", "36.35℃", "36.40℃", "36.45℃",
+            "36.50℃", "36.55℃", "36.60℃", "36.65℃", "36.70℃", "36.75℃", "36.80℃", "36.85℃", "36.90℃", "36.95℃", "37.00℃", "37.05℃",
+            "37.10℃", "37.15℃", "37.20℃", "37.25℃", "37.30℃");
 
-    private List<Float> tempsLong = Arrays.asList(36.00F, 36.05F, 36.10F, 36.15F, 36.20F, 36.25F, 36.30F, 36.35F, 36.40F, 36.45F, 36.50F, 36.55F, 36.60F, 36.65F,
+    private List<Float> tempsLong = Arrays.asList(35.50F, 35.55F, 35.60F, 35.65F,35.70F, 35.75F, 35.80F, 35.85F, 35.90F, 35.95F, 36.00F,
+            36.05F, 36.10F, 36.15F, 36.20F, 36.25F, 36.30F, 36.35F, 36.40F, 36.45F, 36.50F, 36.55F, 36.60F, 36.65F,
             36.70F, 36.75F, 36.80F, 36.85F, 36.90F, 36.95F, 37.00F, 37.05F, 37.10F, 37.15F, 37.20F, 37.25F, 37.30F);
 
 
@@ -158,7 +161,7 @@ public class DayFormActivity extends AppCompatActivity {
         radioIntercourseYes = (RadioButton) findViewById(R.id.radioIntercourseYes);
 
         if (bundle.getLong("dayId") > 0) {
-            if (day.getTemperature() < 36.0F) {
+            if (day.getTemperature() < 35.0F) {
                 checkNoTemperature.setChecked(true);
                 temperaturePicker.setEnabled(false);
             }
@@ -166,6 +169,9 @@ public class DayFormActivity extends AppCompatActivity {
                 checkNoCervix.setChecked(true);
                 seekBarDilation.setEnabled(false);
                 seekBarPosition.setEnabled(false);
+                for (int i = 0; i < hardnessGroup.getChildCount(); i++) {
+                    hardnessGroup.getChildAt(i).setEnabled(false);
+                }
             }
 
             List<MucusType> mucusList = day.getMucus();
@@ -337,10 +343,16 @@ public class DayFormActivity extends AppCompatActivity {
                     cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
                     seekBarPosition.setEnabled(false);
                     seekBarDilation.setEnabled(false);
+                    for (int i = 0; i < hardnessGroup.getChildCount(); i++) {
+                        hardnessGroup.getChildAt(i).setEnabled(false);
+                    }
                 } else {
                     cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
                     seekBarPosition.setEnabled(true);
                     seekBarDilation.setEnabled(true);
+                    for (int i = 0; i < hardnessGroup.getChildCount(); i++) {
+                        hardnessGroup.getChildAt(i).setEnabled(true);
+                    }
                 }
             }
         });
@@ -433,12 +445,12 @@ public class DayFormActivity extends AppCompatActivity {
             if (checkNoCervix.isChecked()) {
                 newDay.setDilationOfCervix(-1);
                 newDay.setPositionOfCervix(-1);
+                newDay.setHardnessOfCervix(null);
             } else {
                 newDay.setDilationOfCervix(seekBarDilation.getProgress());
                 newDay.setPositionOfCervix(seekBarPosition.getProgress());
+                newDay.setHardnessOfCervix(CervixHardnessType.fromString(getStringFromRadioGroup(hardnessGroup)));
             }
-
-            newDay.setHardnessOfCervix(CervixHardnessType.fromString(getStringFromRadioGroup(hardnessGroup)));
             newDay.setOvulatoryPain(getBooleanFromRadioGroup(painGroup));
             newDay.setTensionInTheBreasts(getBooleanFromRadioGroup(tensionGroup));
             newDay.setOtherSymptoms(otherSymptoms.getText().toString());
