@@ -332,7 +332,7 @@ public class TableActivity extends AppCompatActivity {
 
     public void setTemperature(Day day) {
         Float temps[] = {37.30F, 37.25F, 37.20F, 37.15F, 37.10F, 37.05F, 37.00F, 36.95F, 36.90F, 36.85F, 36.80F, 36.75F, 36.70F,
-                36.65F, 36.60F, 36.55F, 36.50F, 36.45F, 36.40F, 36.35F, 36.30F, 36.25F, 36.20F, 36.15F, 35.10F, 36.05F, 36.00F,
+                36.65F, 36.60F, 36.55F, 36.50F, 36.45F, 36.40F, 36.35F, 36.30F, 36.25F, 36.20F, 36.15F, 36.10F, 36.05F, 36.00F,
                 35.95F, 35.90F, 35.85F, 35.80F, 35.75F, 35.70F, 35.65F, 35.60F, 35.55F, 35.50F};
         int setRow = Arrays.asList(temps).indexOf(day.getTemperature());
 
