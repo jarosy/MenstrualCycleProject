@@ -2,10 +2,7 @@ package jarosyjarosy.menstrualcycleproject.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
@@ -19,6 +16,8 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.alexvasilkov.gestures.Settings;
+import com.alexvasilkov.gestures.views.GestureFrameLayout;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.VerticalTextView;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
@@ -161,11 +160,11 @@ public class TableActivity extends AppCompatActivity {
         addTextViewToTable(intercourseLabel, " WSPÓŁŻYCIE ", 0, 3, 56, 1);
 
         double startTemp = 37.3d;
-        for(int i = 1; i < 38; i++) {
-            String tempText = String.format(Locale.ENGLISH,"%,.2f",(double)Math.round((startTemp - ((i-1) * 0.05d)) * 100000d) / 100000d);
+        for (int i = 1; i < 38; i++) {
+            String tempText = String.format(Locale.ENGLISH, "%,.2f", (double) Math.round((startTemp - ((i - 1) * 0.05d)) * 100000d) / 100000d);
             TextView temp = new TextView(this);
             temp.setWidth(dpToPx(180));
-            addTextViewToTable(temp,tempText, 1, 2, i, 1);
+            addTextViewToTable(temp, tempText, 1, 2, i, 1);
         }
 
 
@@ -240,18 +239,18 @@ public class TableActivity extends AppCompatActivity {
         for (Day day : dayList) {
 
             GridLayout table = (GridLayout) findViewById(R.id.table);
-            table.setColumnCount(day.getDayOfCycle() + 4);
+            table.setColumnCount(day.getDayOfCycle() + 5);
 
-            if(iterator.hasPrevious()) {
+            if (iterator.hasPrevious()) {
                 for (int col = dayList.get(iterator.previousIndex()).getDayOfCycle() + 4; col <= day.getDayOfCycle() + 3; col++) {
                     for (int row = 0; row < table.getRowCount(); row++) {
                         TextView blankView = new TextView(this);
                         blankView.setWidth(dpToPx(20));
                         addTextViewToTable(blankView, " ", col, 1, row, 1);
-                        if(row == 50) {
+                        if (row == 50) {
                             blankView.setHeight(dpToPx(40));
                         }
-                        if(row == 54) {
+                        if (row == 54) {
                             blankView.setHeight(dpToPx(100));
                         }
                     }
@@ -320,10 +319,15 @@ public class TableActivity extends AppCompatActivity {
             if (day.getIntercourse()) {
                 intercourse.setBackgroundColor(Color.BLACK);
             }
-            if(iterator.hasNext()) {
+            if (iterator.hasNext()) {
                 iterator.next();
             }
         }
+
+        GestureFrameLayout zoomLayout = (GestureFrameLayout) findViewById(R.id.zoomLayout);
+        zoomLayout.getController().getSettings().setMaxZoom(4f).setDoubleTapZoom(2f).setGravity(Gravity.LEFT).setOverzoomFactor(1f);
+
+
     }
 
     public void setTemperature(Day day) {
@@ -369,7 +373,7 @@ public class TableActivity extends AppCompatActivity {
         Bitmap cervixBitmap = Bitmap.createBitmap(80, 160, Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         Canvas cervixCanvas = new Canvas(cervixBitmap);
-        if(day.getPositionOfCervix() >= 0 && day.getDilationOfCervix() >= 0) {
+        if (day.getPositionOfCervix() >= 0 && day.getDilationOfCervix() >= 0) {
             cervixCanvas.drawCircle(40, 120 - 8 * day.getPositionOfCervix(), 6 + 2 * day.getDilationOfCervix(), cervixPaint);
         }
         GridLayout table = (GridLayout) findViewById(R.id.table);
@@ -406,7 +410,7 @@ public class TableActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-       openList(new View(this));
+        openList(new View(this));
     }
 
 

@@ -304,7 +304,7 @@ public class DayFormActivity extends AppCompatActivity {
         temperaturePicker.setWrapSelectorWheel(false);
         temperaturePicker.setDisplayedValues((String[]) temps.toArray());
         temperaturePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        temperaturePicker.setValue(12);
+        temperaturePicker.setValue(22);
 
         if (bundle.getLong("dayId") > 0) {
             int index = tempsLong.indexOf(day.getTemperature());
