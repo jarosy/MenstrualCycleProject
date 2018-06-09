@@ -4,20 +4,10 @@ Aplikacja kalendarzyka na androida.
 
 Android callendar app.
 
+## Prerequisites
 
-## Installation
-
-```bash
-# ...
-```
-
-## Development
-
-...
-
-```bash
-# ...
-```
+- JDK 1.8
+- Android SDK (25)
 
 ### [No License](https://choosealicense.com/no-permission/)
 
