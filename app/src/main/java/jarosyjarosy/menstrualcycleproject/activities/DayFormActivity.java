@@ -317,14 +317,14 @@ public class DayFormActivity extends AppCompatActivity {
         cervixPaint.setColor(Color.BLACK);
         cervixPaint.setStyle(Paint.Style.STROKE);
         cervixPaint.setStrokeWidth(25);
-        cervixBitmap = Bitmap.createBitmap(320, 320, Bitmap.Config.ARGB_8888);
+        cervixBitmap = Bitmap.createBitmap(dpToPx(80), dpToPx(80), Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         cervixCanvas = new Canvas(cervixBitmap);
-        circleRadius = 15;
-        circleY = 230;
+        circleRadius = dpToPx(4);
+        circleY = dpToPx(60);
         if (bundle.getLong("dayId") > 0) {
-            circleRadius = 15 + day.getDilationOfCervix() * 5;
-            circleY = 230 - day.getPositionOfCervix() * 12;
+            circleRadius = dpToPx(4) + day.getDilationOfCervix() * dpToPx(1);
+            circleY = dpToPx(60) - day.getPositionOfCervix() * dpToPx(3);
             seekBarDilation.setProgress(day.getDilationOfCervix());
             seekBarPosition.setProgress(day.getPositionOfCervix());
         }
@@ -332,7 +332,7 @@ public class DayFormActivity extends AppCompatActivity {
         if (checkNoCervix.isChecked()) {
             cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         } else {
-            cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
+            cervixCanvas.drawCircle(dpToPx(40), circleY, circleRadius, cervixPaint);
         }
 
         checkNoCervix.setOnClickListener(new View.OnClickListener() {
@@ -363,7 +363,7 @@ public class DayFormActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 circleRadius = 15 + 5 * i;
                 cervixCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                cervixCanvas.drawCircle(160, circleY, circleRadius, cervixPaint);
+                cervixCanvas.drawCircle(dpToPx(40), circleY, circleRadius, cervixPaint);
             }
 
             @Override
@@ -532,4 +532,8 @@ public class DayFormActivity extends AppCompatActivity {
         }
     }
 
+    public int dpToPx(int dp) {
+        float density = this.getApplicationContext().getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
 }

@@ -369,12 +369,12 @@ public class TableActivity extends AppCompatActivity {
 
         cervixPaint.setColor(Color.BLACK);
         cervixPaint.setStyle(Paint.Style.STROKE);
-        cervixPaint.setStrokeWidth(12);
-        Bitmap cervixBitmap = Bitmap.createBitmap(80, 160, Bitmap.Config.ARGB_8888);
+        cervixPaint.setStrokeWidth(dpToPx(3));
+        Bitmap cervixBitmap = Bitmap.createBitmap(dpToPx(20), dpToPx(40), Bitmap.Config.ARGB_8888);
         cervixView.setImageBitmap(cervixBitmap);
         Canvas cervixCanvas = new Canvas(cervixBitmap);
         if (day.getPositionOfCervix() >= 0 && day.getDilationOfCervix() >= 0) {
-            cervixCanvas.drawCircle(40, 120 - 8 * day.getPositionOfCervix(), 6 + 2 * day.getDilationOfCervix(), cervixPaint);
+            cervixCanvas.drawCircle(dpToPx(10), dpToPx(30) - dpToPx(2) * day.getPositionOfCervix(), dpToPx(3) * 0.5f + dpToPx(1) * 0.5f * day.getDilationOfCervix(), cervixPaint);
         }
         GridLayout table = (GridLayout) findViewById(R.id.table);
         cervixView.setBackgroundResource(R.drawable.cell_shape);
