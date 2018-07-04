@@ -13,7 +13,9 @@ public class DayValidator {
     private DatabaseAdapter dbAdapter;
 
     public boolean validateDay(Context context, Day dayToCheck,  Cycle cycleToCheck) {
-        return checkIfDayExist(context, dayToCheck) && canDayBeInCycle(context, dayToCheck, cycleToCheck) && isThereNewerCycle(context, dayToCheck, cycleToCheck);
+        return checkIfDayExist(context, dayToCheck)
+                && canDayBeInCycle(context, dayToCheck, cycleToCheck)
+                && isThereNewerCycle(context, dayToCheck, cycleToCheck);
     }
 
     private boolean checkIfDayExist(Context context, Day dayToCheck) {
@@ -42,8 +44,10 @@ public class DayValidator {
         dbAdapter = new DatabaseAdapter(context);
         dbAdapter.open();
         List<Cycle> allCycles = dbAdapter.getAllCycles();
+        dbAdapter.close();
         for (Cycle cycle : allCycles) {
-            if(cycle.getStartDate().isAfter(cycleToCheck.getStartDate()) && dayToCheck.getCreateDate().isAfter(cycle.getStartDate().minusDays(1))) {
+            if(cycle.getStartDate().isAfter(cycleToCheck.getStartDate())
+                    && dayToCheck.getCreateDate().isAfter(cycle.getStartDate().minusDays(1))) {
                 Toast.makeText(context, "Dzień pasuje do nowszego cyklu.", Toast.LENGTH_LONG).show();
                 return false;
             }
