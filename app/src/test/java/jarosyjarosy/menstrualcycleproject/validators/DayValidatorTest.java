@@ -80,7 +80,7 @@ public class DayValidatorTest {
         boolean resultFailure = dayValidator.validateDay(context, day2, cycle);
         assertFalse(resultFailure);
 
-        boolean resultSuccess = dayValidator.validateDay(context, day2, cycle);
+        boolean resultSuccess = dayValidator.validateDay(context, day, cycle);
         assertTrue(resultSuccess);
     }
 }
