@@ -21,6 +21,7 @@ public class CycleValidator {
         DatabaseAdapter dbAdapter = new DatabaseAdapter(context);
         dbAdapter.open();
         List<Cycle> allCycles = dbAdapter.getAllCycles();
+        dbAdapter.close();
         for (Cycle cycle : allCycles) {
             if(appDateFormat.print(cycle.getStartDate()).equals(appDateFormat.print(cycleToCheck.getStartDate()))) {
                 return false;
