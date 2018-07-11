@@ -6,6 +6,8 @@
           android:title="@string/preview"/>
     <item android:id="@+id/newDayItem"
           android:title="@string/new_day"/>
+    <item android:id="@+id/exportItem"
+          android:title="@string/export"/>
     <item android:id="@+id/deleteItem"
           android:title="@string/delete"/>
 </menu>

@@ -1,9 +1,6 @@
 package jarosyjarosy.menstrualcycleproject.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +23,14 @@ import jarosyjarosy.menstrualcycleproject.activities.TableActivity;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
 import jarosyjarosy.menstrualcycleproject.models.Day;
 import jarosyjarosy.menstrualcycleproject.repository.DatabaseAdapter;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.Column;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -184,6 +189,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
                _context.startActivity(intent);
                return true;
 
+            case R.id.exportItem:
+                exportCycleToXLS();
+                return true;
+
             case R.id.deleteItem:
                 openCycleDeleteAlertDialog();
 
@@ -252,6 +261,35 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
         AlertDialog alertCycle = cycleAlertBuild.create();
         alertCycle.setTitle("Na pewno chcesz usunąć dzień?");
         alertCycle.show();
+    }
+
+    private void exportCycleToXLS() {
+        DateTimeFormatter monthAndYearFormat = DateTimeFormat.forPattern("MM.yyyy");
+
+        DatabaseAdapter dbAdapter = new DatabaseAdapter(_context);
+        dbAdapter.open();
+        List<Day> days = dbAdapter.getAllDaysFromCycle(chosenCycle.getCycleId());
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Cykl - " + appDateFormat.print(chosenCycle.getStartDate()));
+        Row dateRow = sheet.createRow(0);
+        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1"));
+        dateRow.createCell(0).setCellValue("Data: " + monthAndYearFormat.print(chosenCycle.getStartDate()));
+
+        for (Day day : days) {
+            dateRow.createCell(day.getDayOfCycle() + 1).setCellValue(day.getCreateDate().getDayOfMonth());
+        }
+
+        try {
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+            File xlsFile = new File(path + "/Cykl-" + appDateFormat.print(chosenCycle.getStartDate()) + ".xls");
+            FileOutputStream out = new FileOutputStream(xlsFile);
+            workbook.write(out);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(_context, "Wyeksportowano cykl do pliku", Toast.LENGTH_LONG).show();
     }
 
     private void writeToSD() throws IOException {
