@@ -18,6 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.alexvasilkov.gestures.Settings;
 import com.alexvasilkov.gestures.views.GestureFrameLayout;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import jarosyjarosy.menstrualcycleproject.R;
 import jarosyjarosy.menstrualcycleproject.config.VerticalTextView;
 import jarosyjarosy.menstrualcycleproject.models.Cycle;
@@ -52,6 +58,7 @@ public class TableActivity extends AppCompatActivity {
 
         setUpActionBar();
         getData();
+        setUpChart();
         setUpTableLabels();
         setUpTableColumns();
     }
@@ -232,6 +239,40 @@ public class TableActivity extends AppCompatActivity {
         cycle = dbAdapter.getCycle(bundle.getLong("cycleId"));
         dayList = dbAdapter.getAllDaysFromCycle(cycle.getCycleId());
         dbAdapter.close();
+    }
+
+    public void setUpChart() {
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+
+        Description desc = new Description();
+        desc.setText("Temperatura / Dzień");
+        chart.setDescription(desc);
+
+        chart.getAxisLeft().setEnabled(false);
+        chart.getAxisRight().setEnabled(false);
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chart.getXAxis().setGranularity(1f);
+
+        List<Entry> entries = new ArrayList<>();
+
+        for (Day day : dayList) {
+            entries.add(new Entry(day.getDayOfCycle(), day.getTemperature()));
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Temperatura");
+
+        // @TODO does not work?
+        dataSet.setColor(R.color.colorPrimary);
+        dataSet.setValueTextColor(R.color.colorPrimaryDark);
+        dataSet.setCircleColor(R.color.colorAccent);
+
+        dataSet.setHighlightEnabled(false);
+
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+
+        chart.invalidate(); // refresh
     }
 
     public void setUpTableColumns() {
