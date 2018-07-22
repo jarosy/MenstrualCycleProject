@@ -26,16 +26,13 @@
             <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/chart"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginBottom="400dp"/>
+                    android:layout_height="125dp" />
 
             <com.alexvasilkov.gestures.views.GestureFrameLayout
                     android:id="@+id/zoomLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/chart">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="125dp">
                 <GridLayout android:id="@+id/table"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
