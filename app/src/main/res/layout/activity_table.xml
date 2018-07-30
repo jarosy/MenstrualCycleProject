@@ -18,21 +18,25 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
-        <LinearLayout
+        <RelativeLayout
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:paddingTop="?attr/actionBarSize">
+
             <com.alexvasilkov.gestures.views.GestureFrameLayout
                     android:id="@+id/zoomLayout"
-                    android:layout_gravity="start"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                <GridLayout android:id="@+id/table"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                </GridLayout>
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical">
+                    <GridLayout android:id="@+id/table"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                    </GridLayout>
+                </LinearLayout>
             </com.alexvasilkov.gestures.views.GestureFrameLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 
 
