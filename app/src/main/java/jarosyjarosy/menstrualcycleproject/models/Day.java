@@ -1,26 +1,39 @@
-package jarosyjarosy.mentrualcycleproject.models;
+package jarosyjarosy.menstrualcycleproject.models;
+
+import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.List;
 
 public class Day {
-    private Date createDate;
+    private Long dayId;
+    private DateTime createDate;
     private Integer dayOfCycle;
     private Float temperature;
-    private String bleeding;
-    private List<String> mucus;
-    private String dilationOfCervix;
-    private String hardnessOfCervix;
+    private BleedingType bleeding;
+    private List<MucusType> mucus;
+    private Integer dilationOfCervix;
+    private Integer positionOfCervix;
+    private CervixHardnessType hardnessOfCervix;
     private Boolean ovulatoryPain;
     private Boolean tensionInTheBreasts;
     private String otherSymptoms;
     private Boolean intercourse;
+    private Long cycleId;
 
-    public Date getCreateDate() {
+    public Long getDayId() {
+        return dayId;
+    }
+
+    public void setDayId(Long dayId) {
+        this.dayId = dayId;
+    }
+
+    public DateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(DateTime createDate) {
         this.createDate = createDate;
     }
 
@@ -40,37 +53,29 @@ public class Day {
         this.temperature = temperature;
     }
 
-    public String getBleeding() {
+    public BleedingType getBleeding() {
         return bleeding;
     }
 
-    public void setBleeding(String bleeding) {
+    public void setBleeding(BleedingType bleeding) {
         this.bleeding = bleeding;
     }
 
-    public List<String> getMucus() {
-        return mucus;
-    }
+    public List<MucusType> getMucus() { return mucus; }
 
-    public void setMucus(List<String> mucus) {
-        this.mucus = mucus;
-    }
+    public void setMucus(List<MucusType> mucus) { this.mucus = mucus; }
 
-    public String getDilationOfCervix() {
-        return dilationOfCervix;
-    }
+    public Integer getDilationOfCervix() { return dilationOfCervix; }
 
-    public void setDilationOfCervix(String dilationOfCervix) {
-        this.dilationOfCervix = dilationOfCervix;
-    }
+    public void setDilationOfCervix(Integer dilationOfCervix) { this.dilationOfCervix = dilationOfCervix; }
 
-    public String getHardnessOfCervix() {
-        return hardnessOfCervix;
-    }
+    public Integer getPositionOfCervix() { return positionOfCervix; }
 
-    public void setHardnessOfCervix(String hardnessOfCervix) {
-        this.hardnessOfCervix = hardnessOfCervix;
-    }
+    public void setPositionOfCervix(Integer positionOfCervix) { this.positionOfCervix = positionOfCervix; }
+
+    public CervixHardnessType getHardnessOfCervix() { return hardnessOfCervix; }
+
+    public void setHardnessOfCervix(CervixHardnessType hardnessOfCervix) { this.hardnessOfCervix = hardnessOfCervix; }
 
     public Boolean getOvulatoryPain() {
         return ovulatoryPain;
@@ -103,4 +108,8 @@ public class Day {
     public void setIntercourse(Boolean intercourse) {
         this.intercourse = intercourse;
     }
+
+    public Long getCycleId() { return cycleId; }
+
+    public void setCycleId(Long cycleId) { this.cycleId = cycleId; }
 }
